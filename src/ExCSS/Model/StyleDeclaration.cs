@@ -208,6 +208,8 @@ namespace ExCSS
 
         internal Property GetProperty(string name)
         {
+            if (name.StartsWith("--"))
+                return Declarations.FirstOrDefault(m => m.Name.Is(name));
             return Declarations.FirstOrDefault(m => m.Name.Isi(name));
         }
 

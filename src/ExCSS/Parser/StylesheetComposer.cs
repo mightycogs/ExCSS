@@ -683,7 +683,14 @@ namespace ExCSS
 
             if (propertyName.Length > 0)
             {
-                property = createProperty(propertyName);
+                if (propertyName.StartsWith("--") && propertyName.Length > 2)
+                {
+                    property = new CustomProperty(propertyName);
+                }
+                else
+                {
+                    property = createProperty(propertyName);
+                }
 
                 if (property == null && _parser.Options.IncludeUnknownDeclarations)
                 {
