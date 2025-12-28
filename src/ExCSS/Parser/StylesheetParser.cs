@@ -16,7 +16,7 @@ namespace ExCSS
             bool includeUnknownRules = false,
             bool includeUnknownDeclarations = false,
             bool tolerateInvalidSelectors = false,
-            bool tolerateInvalidValues = false,
+            bool tolerateInvalidValues = true,
             bool tolerateInvalidConstraints = false,
             bool preserveComments = false,
             bool preserveDuplicateProperties = false
