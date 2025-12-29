@@ -538,8 +538,7 @@ namespace ExCSS
                 var sel = _selector.GetResult();
                 if (valid)
                 {
-                    var code = PseudoClassNames.Not.StylesheetFunction(sel.Text);
-                    return PseudoClassSelector.Create( /*el => !sel.Match(el),*/ code);
+                    return new NotSelector(sel);
                 }
 
                 return null;
@@ -582,8 +581,7 @@ namespace ExCSS
                     return null;
                 }
 
-                var code = PseudoClassNames.Has.StylesheetFunction(sel.Text);
-                return PseudoClassSelector.Create( /*el => el.ChildNodes.QuerySelector(sel) != null,*/ code);
+                return new HasSelector(sel);
             }
 
             public override void Dispose()
@@ -623,9 +621,7 @@ namespace ExCSS
                     return null;
                 }
 
-                var code = PseudoClassNames.Matches.StylesheetFunction(sel.Text);
-                return PseudoClassSelector.Create( /*el => sel.Match(el),*/ code);
-
+                return new MatchesSelector(sel);
             }
 
             public override void Dispose()
