@@ -128,6 +128,7 @@
         public static readonly string GlyphOrientationVertical = "glyph-orientation-vertical";
         public static readonly string Height = "height";
         public static readonly string ImeMode = "ime-mode";
+        public static readonly string Inset = "inset";
         public static readonly string JustifyContent = "justify-content";
         public static readonly string LayoutGrid = "layout-grid";
         public static readonly string LayoutGridChar = "layout-grid-char";

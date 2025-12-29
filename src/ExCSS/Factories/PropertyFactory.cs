@@ -220,7 +220,13 @@ namespace ExCSS
                 PropertyNames.ColumnGap);
 
             AddLonghand(PropertyNames.Height, () => new HeightProperty(), true);
-            
+
+            AddShorthand(PropertyNames.Inset, () => new InsetProperty(),
+                PropertyNames.Top,
+                PropertyNames.Right,
+                PropertyNames.Bottom,
+                PropertyNames.Left);
+
             AddLonghand(PropertyNames.JustifyContent, () => new JustifyContentProperty());
             
             AddLonghand(PropertyNames.Left, () => new LeftProperty(), true);

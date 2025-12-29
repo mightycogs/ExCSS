@@ -1,4 +1,5 @@
-﻿using System;
+using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading;
@@ -11,6 +12,11 @@ namespace ExCSS
     public class StylesheetParser
     {
         internal static readonly StylesheetParser Default = new();
+
+        private PseudoClassSelectorFactory _pseudoClassSelectorFactory;
+        private readonly object _pseudoClassFactoryLock = new();
+        private readonly ConcurrentDictionary<string, Func<SelectorConstructor, SelectorConstructor.FunctionState>> _customPseudoClassFunctions =
+            new(StringComparer.OrdinalIgnoreCase);
 
         public StylesheetParser(
             bool includeUnknownRules = false,
@@ -35,6 +41,25 @@ namespace ExCSS
         }
 
         internal ParserOptions Options { get; }
+
+        public StylesheetParser RegisterPseudoClass(string name, Func<ISelector> factory)
+        {
+            if (name == null) throw new ArgumentNullException(nameof(name));
+            if (factory == null) throw new ArgumentNullException(nameof(factory));
+
+            lock (_pseudoClassFactoryLock)
+            {
+                _pseudoClassSelectorFactory ??= PseudoClassSelectorFactory.Instance.Clone();
+                _pseudoClassSelectorFactory.Register(name, factory);
+            }
+            return this;
+        }
+
+        internal StylesheetParser RegisterPseudoClassFunction(string name, Func<SelectorConstructor, SelectorConstructor.FunctionState> factory)
+        {
+            _customPseudoClassFunctions[name] = factory;
+            return this;
+        }
 
         public Stylesheet Parse(string content)
         {
@@ -97,9 +122,10 @@ namespace ExCSS
         internal SelectorConstructor GetSelectorCreator()
         {
             var attributeSelector = AttributeSelectorFactory.Instance;
-            var pseudoClassSelector = PseudoClassSelectorFactory.Instance;
+            var pseudoClassSelector = _pseudoClassSelectorFactory ?? PseudoClassSelectorFactory.Instance;
             var pseudoElementSelector = new PseudoElementSelectorFactory(this);
-            return Pool.NewSelectorConstructor(attributeSelector, pseudoClassSelector, pseudoElementSelector);
+            var customFunctions = _customPseudoClassFunctions.Count > 0 ? _customPseudoClassFunctions : null;
+            return Pool.NewSelectorConstructor(attributeSelector, pseudoClassSelector, pseudoElementSelector, customFunctions);
         }
 
         internal Stylesheet Parse(TextSource source)

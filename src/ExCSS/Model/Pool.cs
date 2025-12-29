@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+using System;
+using System.Collections.Generic;
 using System.Text;
 
 namespace ExCSS
@@ -19,13 +20,14 @@ namespace ExCSS
         }
 
         public static SelectorConstructor NewSelectorConstructor(AttributeSelectorFactory attributeSelector,
-            PseudoClassSelectorFactory pseudoClassSelector, PseudoElementSelectorFactory pseudoElementSelector)
+            PseudoClassSelectorFactory pseudoClassSelector, PseudoElementSelectorFactory pseudoElementSelector,
+            IDictionary<string, Func<SelectorConstructor, SelectorConstructor.FunctionState>> customPseudoClassFunctions = null)
         {
             lock (Lock)
             {
-                return Selector.Count == 0 
-                    ? new SelectorConstructor(attributeSelector, pseudoClassSelector, pseudoElementSelector) 
-                    : Selector.Pop().Reset(attributeSelector, pseudoClassSelector, pseudoElementSelector);
+                return Selector.Count == 0
+                    ? new SelectorConstructor(attributeSelector, pseudoClassSelector, pseudoElementSelector, customPseudoClassFunctions)
+                    : Selector.Pop().Reset(attributeSelector, pseudoClassSelector, pseudoElementSelector, customPseudoClassFunctions);
             }
         }
 

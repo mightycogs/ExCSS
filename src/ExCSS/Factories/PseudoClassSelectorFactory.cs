@@ -1,4 +1,5 @@
-﻿using System;
+using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -10,13 +11,13 @@ namespace ExCSS
             new(() =>
                 {
                     var factory = new PseudoClassSelectorFactory();
-                    Selectors.Add(PseudoElementNames.Before,
+                    DefaultSelectors.Add(PseudoElementNames.Before,
                         PseudoElementSelectorFactory.Instance.Create(PseudoElementNames.Before));
-                    Selectors.Add(PseudoElementNames.After,
+                    DefaultSelectors.Add(PseudoElementNames.After,
                         PseudoElementSelectorFactory.Instance.Create(PseudoElementNames.After));
-                    Selectors.Add(PseudoElementNames.FirstLine,
+                    DefaultSelectors.Add(PseudoElementNames.FirstLine,
                         PseudoElementSelectorFactory.Instance.Create(PseudoElementNames.FirstLine));
-                    Selectors.Add(PseudoElementNames.FirstLetter,
+                    DefaultSelectors.Add(PseudoElementNames.FirstLetter,
                         PseudoElementSelectorFactory.Instance.Create(PseudoElementNames.FirstLetter));
                     return factory;
                 }
@@ -24,7 +25,7 @@ namespace ExCSS
 
         #region Selectors
 
-        private static readonly Dictionary<string, ISelector> Selectors =
+        private static readonly Dictionary<string, ISelector> DefaultSelectors =
             new HashSet<string>(StringComparer.OrdinalIgnoreCase)
                 {
                     PseudoClassNames.Root,
@@ -66,11 +67,35 @@ namespace ExCSS
 
         #endregion
 
+        private readonly ConcurrentDictionary<string, Func<ISelector>> _customSelectors =
+            new(StringComparer.OrdinalIgnoreCase);
+
         internal static PseudoClassSelectorFactory Instance => Lazy.Value;
+
+        internal void Register(string name, Func<ISelector> factory)
+        {
+            if (name == null) throw new ArgumentNullException(nameof(name));
+            if (factory == null) throw new ArgumentNullException(nameof(factory));
+            _customSelectors[name] = factory;
+        }
 
         public ISelector Create(string name)
         {
-            return Selectors.TryGetValue(name, out var selector) ? selector : null;
+            if (_customSelectors.TryGetValue(name, out var factory))
+            {
+                return factory();
+            }
+            return DefaultSelectors.TryGetValue(name, out var selector) ? selector : null;
+        }
+
+        internal PseudoClassSelectorFactory Clone()
+        {
+            var clone = new PseudoClassSelectorFactory();
+            foreach (var kvp in _customSelectors)
+            {
+                clone._customSelectors[kvp.Key] = kvp.Value;
+            }
+            return clone;
         }
     }
 }

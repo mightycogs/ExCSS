@@ -20,12 +20,14 @@ namespace ExCSS
         private AttributeSelectorFactory _attributeSelector;
         private PseudoElementSelectorFactory _pseudoElementSelector;
         private PseudoClassSelectorFactory _pseudoClassSelector;
+        private IDictionary<string, Func<SelectorConstructor, FunctionState>> _customPseudoClassFunctions;
 
         public SelectorConstructor(AttributeSelectorFactory attributeSelector,
-            PseudoClassSelectorFactory pseudoClassSelector, PseudoElementSelectorFactory pseudoElementSelector)
+            PseudoClassSelectorFactory pseudoClassSelector, PseudoElementSelectorFactory pseudoElementSelector,
+            IDictionary<string, Func<SelectorConstructor, FunctionState>> customPseudoClassFunctions = null)
         {
             _combinators = new Stack<Combinator>();
-            Reset(attributeSelector, pseudoClassSelector, pseudoElementSelector);
+            Reset(attributeSelector, pseudoClassSelector, pseudoElementSelector, customPseudoClassFunctions);
         }
 
         private enum State : byte
@@ -126,7 +128,8 @@ namespace ExCSS
         }
 
         public SelectorConstructor Reset(AttributeSelectorFactory attributeSelector,
-            PseudoClassSelectorFactory pseudoClassSelector, PseudoElementSelectorFactory pseudoElementSelector)
+            PseudoClassSelectorFactory pseudoClassSelector, PseudoElementSelectorFactory pseudoElementSelector,
+            IDictionary<string, Func<SelectorConstructor, FunctionState>> customPseudoClassFunctions = null)
         {
             _attrName = null;
             _attrValue = null;
@@ -143,6 +146,7 @@ namespace ExCSS
             _attributeSelector = attributeSelector;
             _pseudoClassSelector = pseudoClassSelector;
             _pseudoElementSelector = pseudoElementSelector;
+            _customPseudoClassFunctions = customPseudoClassFunctions;
             return this;
         }
 
@@ -459,7 +463,16 @@ namespace ExCSS
 
         private ISelector GetPseudoFunction(FunctionToken arguments)
         {
-            if (!PseudoClassFunctions.TryGetValue(arguments.Data, out var creator)) return null;
+            Func<SelectorConstructor, FunctionState> creator = null;
+
+            if (_customPseudoClassFunctions != null &&
+                _customPseudoClassFunctions.TryGetValue(arguments.Data, out creator))
+            {
+            }
+            else if (!PseudoClassFunctions.TryGetValue(arguments.Data, out creator))
+            {
+                return null;
+            }
 
             using var function = creator(this);
             _ready = false;
@@ -479,10 +492,10 @@ namespace ExCSS
 
         private SelectorConstructor CreateChild()
         {
-            return Pool.NewSelectorConstructor(_attributeSelector, _pseudoClassSelector, _pseudoElementSelector);
+            return Pool.NewSelectorConstructor(_attributeSelector, _pseudoClassSelector, _pseudoElementSelector, _customPseudoClassFunctions);
         }
 
-        private abstract class FunctionState : IDisposable
+        internal abstract class FunctionState : IDisposable
         {
             public virtual void Dispose()
             {
