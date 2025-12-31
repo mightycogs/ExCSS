@@ -6,5 +6,6 @@
         string Value { get; }
         string Original { get; }
         bool IsImportant { get; }
+        IStyleValue TypedValue { get; }
     }
 }
