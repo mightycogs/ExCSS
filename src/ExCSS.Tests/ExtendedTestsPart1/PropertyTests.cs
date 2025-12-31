@@ -306,6 +306,7 @@ namespace ExCSS.Tests.ExtendedTestsPart1
             Assert.NotNull(prop);
             Assert.Equal("box-sizing", prop.Name);
             Assert.Equal("border-box", prop.Value);
+            Assert.NotNull(prop.TypedValue);
         }
 
         [Fact]
@@ -330,10 +331,14 @@ namespace ExCSS.Tests.ExtendedTestsPart1
             var pointerProp = rules[0].Style.GetProperty("cursor");
             Assert.NotNull(pointerProp);
             Assert.Equal("pointer", pointerProp.Value);
+            Assert.NotNull(pointerProp.TypedValue);
+            Assert.IsNotType<RawValue>(pointerProp.TypedValue);
 
             var notAllowedProp = rules[1].Style.GetProperty("cursor");
             Assert.NotNull(notAllowedProp);
             Assert.Equal("not-allowed", notAllowedProp.Value);
+            Assert.NotNull(notAllowedProp.TypedValue);
+            Assert.IsNotType<RawValue>(notAllowedProp.TypedValue);
         }
 
         [Fact]
@@ -345,10 +350,12 @@ namespace ExCSS.Tests.ExtendedTestsPart1
             var overflowY = rule.Style.GetProperty("overflow-y");
             Assert.NotNull(overflowY);
             Assert.Equal("auto", overflowY.Value);
+            Assert.NotNull(overflowY.TypedValue);
 
             var overflowX = rule.Style.GetProperty("overflow-x");
             Assert.NotNull(overflowX);
             Assert.Equal("visible", overflowX.Value);
+            Assert.NotNull(overflowX.TypedValue);
         }
 
         [Fact]
@@ -361,6 +368,8 @@ namespace ExCSS.Tests.ExtendedTestsPart1
             Assert.NotNull(prop);
             Assert.Equal("visibility", prop.Name);
             Assert.Equal("hidden", prop.Value);
+            Assert.NotNull(prop.TypedValue);
+            Assert.IsNotType<RawValue>(prop.TypedValue);
         }
 
         [Fact]
@@ -373,10 +382,20 @@ namespace ExCSS.Tests.ExtendedTestsPart1
             var opacity0 = rules[0].Style.GetProperty("opacity");
             Assert.NotNull(opacity0);
             Assert.Equal("0", opacity0.Value);
+            Assert.NotNull(opacity0.TypedValue);
+            Assert.IsNotType<RawValue>(opacity0.TypedValue);
+            Assert.IsType<Number>(opacity0.TypedValue);
+            var num0 = (Number)opacity0.TypedValue;
+            Assert.Equal(0, num0.Value);
 
             var opacity1 = rules[1].Style.GetProperty("opacity");
             Assert.NotNull(opacity1);
             Assert.Equal("1", opacity1.Value);
+            Assert.NotNull(opacity1.TypedValue);
+            Assert.IsNotType<RawValue>(opacity1.TypedValue);
+            Assert.IsType<Number>(opacity1.TypedValue);
+            var num1 = (Number)opacity1.TypedValue;
+            Assert.Equal(1, num1.Value);
         }
 
         [Fact]
@@ -389,6 +408,8 @@ namespace ExCSS.Tests.ExtendedTestsPart1
             Assert.NotNull(prop);
             Assert.Equal("text-transform", prop.Name);
             Assert.Equal("uppercase", prop.Value);
+            Assert.NotNull(prop.TypedValue);
+            Assert.IsNotType<RawValue>(prop.TypedValue);
         }
 
         [Fact]
@@ -413,6 +434,8 @@ namespace ExCSS.Tests.ExtendedTestsPart1
             Assert.NotNull(prop);
             Assert.Equal("white-space", prop.Name);
             Assert.Equal("nowrap", prop.Value);
+            Assert.NotNull(prop.TypedValue);
+            Assert.IsNotType<RawValue>(prop.TypedValue);
         }
 
         [Fact]
@@ -425,6 +448,7 @@ namespace ExCSS.Tests.ExtendedTestsPart1
             Assert.NotNull(prop);
             Assert.Equal("pointer-events", prop.Name);
             Assert.Equal("none", prop.Value);
+            Assert.NotNull(prop.TypedValue);
         }
 
         [Fact]
@@ -437,6 +461,7 @@ namespace ExCSS.Tests.ExtendedTestsPart1
             Assert.NotNull(prop);
             Assert.Equal("user-select", prop.Name);
             Assert.Equal("none", prop.Value);
+            Assert.NotNull(prop.TypedValue);
         }
 
         [Fact]
@@ -449,6 +474,8 @@ namespace ExCSS.Tests.ExtendedTestsPart1
             Assert.NotNull(prop);
             Assert.Equal("object-fit", prop.Name);
             Assert.Equal("contain", prop.Value);
+            Assert.NotNull(prop.TypedValue);
+            Assert.IsNotType<RawValue>(prop.TypedValue);
         }
 
         [Fact]
@@ -461,6 +488,8 @@ namespace ExCSS.Tests.ExtendedTestsPart1
             Assert.NotNull(prop);
             Assert.Equal("outline", prop.Name);
             Assert.Equal("none", prop.Value);
+            Assert.NotNull(prop.TypedValue);
+            Assert.IsNotType<RawValue>(prop.TypedValue);
         }
 
         [Fact]
@@ -504,6 +533,13 @@ namespace ExCSS.Tests.ExtendedTestsPart1
             Assert.NotNull(prop);
             Assert.Equal("min-width", prop.Name);
             Assert.True(prop.HasValue);
+            Assert.Equal("400px", prop.Value);
+            Assert.NotNull(prop.TypedValue);
+            Assert.IsNotType<RawValue>(prop.TypedValue);
+            Assert.IsType<Length>(prop.TypedValue);
+            var length = (Length)prop.TypedValue;
+            Assert.Equal(400f, length.Value);
+            Assert.Equal(Length.Unit.Px, length.Type);
         }
 
         [Fact]
@@ -516,6 +552,8 @@ namespace ExCSS.Tests.ExtendedTestsPart1
             Assert.NotNull(prop);
             Assert.Equal("text-align", prop.Name);
             Assert.Equal("center", prop.Value);
+            Assert.NotNull(prop.TypedValue);
+            Assert.IsNotType<RawValue>(prop.TypedValue);
         }
 
         [Fact]
@@ -528,6 +566,8 @@ namespace ExCSS.Tests.ExtendedTestsPart1
             Assert.NotNull(prop);
             Assert.Equal("align-self", prop.Name);
             Assert.Equal("stretch", prop.Value);
+            Assert.NotNull(prop.TypedValue);
+            Assert.IsNotType<RawValue>(prop.TypedValue);
         }
 
         [Fact]
@@ -540,6 +580,8 @@ namespace ExCSS.Tests.ExtendedTestsPart1
             Assert.NotNull(prop);
             Assert.Equal("flex-shrink", prop.Name);
             Assert.True(prop.HasValue);
+            Assert.Equal("0", prop.Value);
+            Assert.NotNull(prop.TypedValue);
         }
 
         [Fact]
@@ -552,6 +594,13 @@ namespace ExCSS.Tests.ExtendedTestsPart1
             Assert.NotNull(prop);
             Assert.Equal("min-height", prop.Name);
             Assert.True(prop.HasValue);
+            Assert.Equal("64px", prop.Value);
+            Assert.NotNull(prop.TypedValue);
+            Assert.IsNotType<RawValue>(prop.TypedValue);
+            Assert.IsType<Length>(prop.TypedValue);
+            var length = (Length)prop.TypedValue;
+            Assert.Equal(64f, length.Value);
+            Assert.Equal(Length.Unit.Px, length.Type);
         }
     }
 }
