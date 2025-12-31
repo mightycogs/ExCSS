@@ -1,0 +1,3 @@
+.element {
+  right: calc(-1 * var(--card-notch-size));
+}

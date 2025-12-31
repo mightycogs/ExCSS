@@ -37,7 +37,7 @@ namespace ExCSS
             return properties.Guard<ArgumentsValue>();
         }
 
-        private sealed class ArgumentsValue : IPropertyValue
+        private sealed class ArgumentsValue : IPropertyValue, IArgumentsPropertyValue
         {
             private readonly IPropertyValue[] _arguments;
 
@@ -57,6 +57,8 @@ namespace ExCSS
             }
 
             public TokenValue Original { get; }
+
+            public IPropertyValue[] Arguments => _arguments;
 
             public TokenValue ExtractFor(string name)
             {

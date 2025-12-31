@@ -55,9 +55,9 @@ namespace ExCSS.Tests
             return parser.ParseDeclaration(source);
         }
         
-        internal static TokenValue ParseValue(string source)
+        internal static TokenValue ParseValue(string source, bool tolerateInvalidValues = true)
         {
-            var parser = new StylesheetParser();
+            var parser = new StylesheetParser(tolerateInvalidValues: tolerateInvalidValues);
             return parser.ParseValue(source);
         }
 

@@ -416,7 +416,7 @@ h1 { color: blue }");
         public void CssCreateValueListEmpty()
         {
             var valueString = "";
-            var value = ParseValue(valueString);
+            var value = ParseValue(valueString, tolerateInvalidValues: false);
             Assert.Null(value);
         }
 
@@ -424,7 +424,7 @@ h1 { color: blue }");
         public void CssCreateValueListSpaces()
         {
             var valueString = "  ";
-            var value = ParseValue(valueString);
+            var value = ParseValue(valueString, tolerateInvalidValues: false);
             Assert.Null(value);
         }
 
@@ -850,7 +850,7 @@ h1 { color: blue }");
 
             using (var memoryStream = new MemoryStream(bs, false))
             {
-                var sheet = memoryStream.ToCssStylesheet();
+                var sheet = memoryStream.ToCssStylesheet(tolerateInvalidValues: false);
                 Assert.NotNull(sheet);
                 Assert.Equal(0, sheet.Rules.Length);
             }
@@ -859,7 +859,7 @@ h1 { color: blue }");
         [Fact]
         public void CssSheetFromStringWithQuestionMarksLeadingToInfiniteLoop()
         {
-            var sheet = "U+???\0".ToCssStylesheet();
+            var sheet = "U+???\0".ToCssStylesheet(tolerateInvalidValues: false);
             Assert.NotNull(sheet);
             Assert.Equal(0, sheet.Rules.Length);
         }

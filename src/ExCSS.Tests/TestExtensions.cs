@@ -8,9 +8,9 @@ namespace ExCSS.Tests
 {
     static class TestExtensions
     {
-        public static Stylesheet ToCssStylesheet(this string sourceCode)
+        public static Stylesheet ToCssStylesheet(this string sourceCode, bool tolerateInvalidValues = true)
         {
-            var parser = new StylesheetParser();
+            var parser = new StylesheetParser(tolerateInvalidValues: tolerateInvalidValues);
             return parser.Parse(sourceCode);
         }
 
@@ -36,9 +36,9 @@ namespace ExCSS.Tests
             }
         }
 
-        public static Stylesheet ToCssStylesheet(this Stream content)
+        public static Stylesheet ToCssStylesheet(this Stream content, bool tolerateInvalidValues = true)
         {
-            var parser = new StylesheetParser();
+            var parser = new StylesheetParser(tolerateInvalidValues: tolerateInvalidValues);
             return parser.Parse(content);
         }
     }

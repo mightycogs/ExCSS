@@ -38,7 +38,7 @@ namespace ExCSS
             return result != null ? new TransformationValueConverter(result, _labels) : null;
         }
 
-        private sealed class TransformationValueConverter : IPropertyValue
+        private sealed class TransformationValueConverter : IPropertyValue, ITypedPropertyValue
         {
             private readonly string[] _labels;
             private readonly IPropertyValue _value;
@@ -56,6 +56,13 @@ namespace ExCSS
             public TokenValue ExtractFor(string name)
             {
                 return _labels.Contains(name) ? _value.ExtractFor(name) : null;
+            }
+
+            public object GetValue()
+            {
+                if (_value is ITypedPropertyValue typed)
+                    return typed.GetValue();
+                return null;
             }
         }
     }

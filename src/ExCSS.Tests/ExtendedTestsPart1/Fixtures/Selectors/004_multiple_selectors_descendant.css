@@ -1,0 +1,4 @@
+.part-card.selected .part-name,
+.part-card.selected .part-price {
+  color: #000;
+}

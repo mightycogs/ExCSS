@@ -111,7 +111,7 @@ namespace ExCSS
             try
             {
                 var number = token.Value;
-                var percentage = number * 100;
+                var percentage = (float)(number * 100);
                 return new Percent(percentage);
             }
             catch
@@ -214,7 +214,21 @@ namespace ExCSS
         {
             var element = value.OnlyOrDefault();
 
-            if (element != null && element.Type == TokenType.Number) return ((NumberToken) element).Value;
+            if (element != null && element.Type == TokenType.Number) return (float)((NumberToken) element).Value;
+
+            return null;
+        }
+
+        public static Number? ToNumber(this IEnumerable<Token> value)
+        {
+            var element = value.OnlyOrDefault();
+
+            if (element != null && element.Type == TokenType.Number)
+            {
+                var token = (NumberToken)element;
+                var unit = token.IsInteger ? Number.Unit.Integer : Number.Unit.Float;
+                return new Number(token.Value, unit);
+            }
 
             return null;
         }

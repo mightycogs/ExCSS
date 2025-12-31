@@ -210,7 +210,35 @@ namespace ExCSS
         {
             if (name.StartsWith("--"))
                 return Declarations.FirstOrDefault(m => m.Name.Is(name));
-            return Declarations.FirstOrDefault(m => m.Name.Isi(name));
+
+            var property = Declarations.FirstOrDefault(m => m.Name.Isi(name));
+            if (property != null)
+                return property;
+
+            if (!PropertyFactory.Instance.IsShorthand(name))
+                return null;
+
+            var shorthand = PropertyFactory.Instance.CreateShorthand(name);
+            if (shorthand == null)
+                return null;
+
+            var longhands = PropertyFactory.Instance.GetLonghands(name);
+            var properties = new List<Property>();
+
+            foreach (var longhandName in longhands)
+            {
+                var longhand = Declarations.FirstOrDefault(m => m.Name.Isi(longhandName));
+                if (longhand == null)
+                    return null;
+                properties.Add(longhand);
+            }
+
+            var value = shorthand.Converter.Construct(properties.ToArray());
+            if (value == null)
+                return null;
+
+            shorthand.DeclaredValue = value;
+            return shorthand;
         }
 
         internal void SetProperty(Property property)

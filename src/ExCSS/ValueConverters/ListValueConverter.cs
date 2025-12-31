@@ -67,7 +67,7 @@ namespace ExCSS
             return result;
         }
 
-        private sealed class ListValue : IPropertyValue
+        private sealed class ListValue : IPropertyValue, ITypedPropertyValue
         {
             private readonly IPropertyValue[] _values;
 
@@ -101,6 +101,27 @@ namespace ExCSS
                 }
 
                 return new TokenValue(tokens);
+            }
+
+            public object GetValue()
+            {
+                var styleValues = new List<IStyleValue>();
+                foreach (var val in _values)
+                {
+                    if (val is ITypedPropertyValue typed)
+                    {
+                        var obj = typed.GetValue();
+                        if (obj is IStyleValue sv)
+                            styleValues.Add(sv);
+                        else
+                            styleValues.Add(new RawValue(val.CssText));
+                    }
+                    else
+                    {
+                        styleValues.Add(new RawValue(val.CssText));
+                    }
+                }
+                return new StyleValueList(styleValues);
             }
         }
     }

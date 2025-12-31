@@ -27,6 +27,7 @@
         public static readonly string BackgroundPositionY = "background-position-y";
         public static readonly string BackgroundRepeat = "background-repeat";
         public static readonly string Background = "background";
+        public static readonly string BackdropFilter = "backdrop-filter";
         public static readonly string Behavior = "behavior";
         public static readonly string BaselineShift = "baseline-shift";
         public static readonly string BorderColor = "border-color";
@@ -240,5 +241,8 @@
         public static readonly string Src = "src";
         public static readonly string ObjectFit = "object-fit";
         public static readonly string ObjectPosition = "object-position";
+
+        public static readonly string WebkitBackdropFilter = "-webkit-backdrop-filter";
+        public static readonly string MozAppearance = "-moz-appearance";
     }
 }

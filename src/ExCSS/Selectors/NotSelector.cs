@@ -3,7 +3,7 @@ namespace ExCSS
     public sealed class NotSelector : SelectorBase
     {
         internal NotSelector(ISelector innerSelector)
-            : base(innerSelector.Specificity, PseudoClassNames.Not.StylesheetFunction(innerSelector.Text))
+            : base(innerSelector.Specificity, $"{PseudoClassNames.Separator}{PseudoClassNames.Not.StylesheetFunction(innerSelector.Text)}")
         {
             InnerSelector = innerSelector;
         }

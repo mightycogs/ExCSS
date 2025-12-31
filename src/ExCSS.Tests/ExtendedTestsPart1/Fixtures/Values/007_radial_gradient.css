@@ -1,0 +1,7 @@
+.part-thumbnail {
+  background: radial-gradient(
+    ellipse 100% 80% at center,
+    rgba(255, 255, 255, 0.15) 0%,
+    transparent 70%
+  ), #000;
+}

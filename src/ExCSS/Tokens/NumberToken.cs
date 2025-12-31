@@ -34,6 +34,6 @@ namespace ExCSS
             }
         }
 
-        public float Value => float.Parse(Data, CultureInfo.InvariantCulture);
+        public double Value => double.Parse(Data, CultureInfo.InvariantCulture);
     }
 }

@@ -49,6 +49,9 @@ namespace ExCSS
         public static readonly IValueConverter NumberConverter =
             new StructValueConverter<float>(ValueExtensions.ToSingle);
 
+        public static readonly IValueConverter TypedNumberConverter =
+            new StructValueConverter<Number>(ValueExtensions.ToNumber);
+
         public static readonly IValueConverter NaturalNumberConverter =
             new StructValueConverter<float>(ValueExtensions.ToNaturalSingle);
 
@@ -65,7 +68,7 @@ namespace ExCSS
             new StructValueConverter<Color>(ValueExtensions.ToColor);
 
         public static readonly IValueConverter LengthOrPercentConverter =
-            new StructValueConverter<Length>(ValueExtensions.ToDistance);
+            LengthConverter.Or(PercentConverter);
 
         public static readonly IValueConverter PercentOrFractionConverter =
             new StructValueConverter<Percent>(ValueExtensions.ToPercentOrFraction);
@@ -145,21 +148,24 @@ namespace ExCSS
         public static readonly IValueConverter RgbColorConverter = Construct(() =>
         {
             var number = RgbComponentConverter.Required();
-            return new FunctionValueConverter(FunctionNames.Rgb, WithArgs(number, number, number));
+            return new TypedFunctionValueConverter<Color>(FunctionNames.Rgb, WithArgs(number, number, number),
+                args => ExtractRgbColor(args));
         });
 
         public static readonly IValueConverter RgbaColorConverter = Construct(() =>
         {
             var value = RgbComponentConverter.Required();
             var alpha = AlphaValueConverter.Required();
-            return new FunctionValueConverter(FunctionNames.Rgba, WithArgs(value, value, value, alpha));
+            return new TypedFunctionValueConverter<Color>(FunctionNames.Rgba, WithArgs(value, value, value, alpha),
+                args => ExtractRgbaColor(args));
         });
 
         public static readonly IValueConverter HslColorConverter = Construct(() =>
         {
             var hue = AngleNumberConverter.Required();
             var percent = PercentConverter.Required();
-            return new FunctionValueConverter(FunctionNames.Hsl, WithArgs(hue, percent, percent));
+            return new TypedFunctionValueConverter<Color>(FunctionNames.Hsl, WithArgs(hue, percent, percent),
+                args => ExtractHslColor(args));
         });
 
         public static readonly IValueConverter HslaColorConverter = Construct(() =>
@@ -167,14 +173,16 @@ namespace ExCSS
             var hue = AngleNumberConverter.Required();
             var percent = PercentConverter.Required();
             var alpha = AlphaValueConverter.Required();
-            return new FunctionValueConverter(FunctionNames.Hsla, WithArgs(hue, percent, percent, alpha));
+            return new TypedFunctionValueConverter<Color>(FunctionNames.Hsla, WithArgs(hue, percent, percent, alpha),
+                args => ExtractHslaColor(args));
         });
 
         public static readonly IValueConverter GrayColorConverter = Construct(() =>
         {
             var value = RgbComponentConverter.Required();
             var alpha = AlphaValueConverter.Option(1f);
-            return new FunctionValueConverter(FunctionNames.Gray, WithArgs(value, alpha));
+            return new TypedFunctionValueConverter<Color>(FunctionNames.Gray, WithArgs(value, alpha),
+                args => ExtractGrayColor(args));
         });
 
         public static readonly IValueConverter HwbColorConverter = Construct(() =>
@@ -182,7 +190,8 @@ namespace ExCSS
             var hue = AngleNumberConverter.Required();
             var percent = PercentConverter.Required();
             var alpha = AlphaValueConverter.Option(1f);
-            return new FunctionValueConverter(FunctionNames.Hwb, WithArgs(hue, percent, percent, alpha));
+            return new TypedFunctionValueConverter<Color>(FunctionNames.Hwb, WithArgs(hue, percent, percent, alpha),
+                args => ExtractHwbColor(args));
         });
 
         public static readonly IValueConverter PerspectiveConverter =
@@ -376,7 +385,7 @@ namespace ExCSS
         #region Composed
 
         public static readonly IValueConverter LineHeightConverter =
-            LengthOrPercentConverter.Or(NumberConverter).Or(Keywords.Normal);
+            LengthOrPercentConverter.Or(TypedNumberConverter).Or(Keywords.Normal);
 
         public static readonly IValueConverter BorderSliceConverter = PercentConverter.Or(NumberConverter);
 
@@ -511,6 +520,83 @@ namespace ExCSS
         private static IValueConverter WithArgs(params IValueConverter[] converters)
         {
             return new ArgumentsValueConverter(converters);
+        }
+
+        #endregion
+
+        #region Color Extractors
+
+        private static T? ExtractTypedValue<T>(IPropertyValue propertyValue) where T : struct
+        {
+            if (propertyValue is ITypedPropertyValue typed)
+            {
+                var value = typed.GetValue();
+                if (value is T typedValue)
+                    return typedValue;
+            }
+            return null;
+        }
+
+        private static Color? ExtractRgbColor(IPropertyValue[] args)
+        {
+            if (args.Length < 3) return null;
+            var r = ExtractTypedValue<byte>(args[0]);
+            var g = ExtractTypedValue<byte>(args[1]);
+            var b = ExtractTypedValue<byte>(args[2]);
+            if (!r.HasValue || !g.HasValue || !b.HasValue) return null;
+            return Color.FromRgb(r.Value, g.Value, b.Value);
+        }
+
+        private static Color? ExtractRgbaColor(IPropertyValue[] args)
+        {
+            if (args.Length < 4) return null;
+            var r = ExtractTypedValue<byte>(args[0]);
+            var g = ExtractTypedValue<byte>(args[1]);
+            var b = ExtractTypedValue<byte>(args[2]);
+            var a = ExtractTypedValue<float>(args[3]);
+            if (!r.HasValue || !g.HasValue || !b.HasValue || !a.HasValue) return null;
+            return Color.FromRgba(r.Value, g.Value, b.Value, a.Value);
+        }
+
+        private static Color? ExtractHslColor(IPropertyValue[] args)
+        {
+            if (args.Length < 3) return null;
+            var h = ExtractTypedValue<Angle>(args[0]);
+            var s = ExtractTypedValue<Percent>(args[1]);
+            var l = ExtractTypedValue<Percent>(args[2]);
+            if (!h.HasValue || !s.HasValue || !l.HasValue) return null;
+            return Color.FromHsl((float)h.Value.ToTurns(), s.Value.NormalizedValue, l.Value.NormalizedValue);
+        }
+
+        private static Color? ExtractHslaColor(IPropertyValue[] args)
+        {
+            if (args.Length < 4) return null;
+            var h = ExtractTypedValue<Angle>(args[0]);
+            var s = ExtractTypedValue<Percent>(args[1]);
+            var l = ExtractTypedValue<Percent>(args[2]);
+            var a = ExtractTypedValue<float>(args[3]);
+            if (!h.HasValue || !s.HasValue || !l.HasValue || !a.HasValue) return null;
+            return Color.FromHsla((float)h.Value.ToTurns(), s.Value.NormalizedValue, l.Value.NormalizedValue, a.Value);
+        }
+
+        private static Color? ExtractGrayColor(IPropertyValue[] args)
+        {
+            if (args.Length < 2) return null;
+            var gray = ExtractTypedValue<byte>(args[0]);
+            var a = ExtractTypedValue<float>(args[1]);
+            if (!gray.HasValue || !a.HasValue) return null;
+            return Color.FromGray(gray.Value, a.Value);
+        }
+
+        private static Color? ExtractHwbColor(IPropertyValue[] args)
+        {
+            if (args.Length < 4) return null;
+            var h = ExtractTypedValue<Angle>(args[0]);
+            var w = ExtractTypedValue<Percent>(args[1]);
+            var b = ExtractTypedValue<Percent>(args[2]);
+            var a = ExtractTypedValue<float>(args[3]);
+            if (!h.HasValue || !w.HasValue || !b.HasValue || !a.HasValue) return null;
+            return Color.FromHwba((float)h.Value.ToTurns(), w.Value.NormalizedValue, b.Value.NormalizedValue, a.Value);
         }
 
         #endregion

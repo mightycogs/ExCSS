@@ -3,7 +3,7 @@ namespace ExCSS
     public sealed class HasSelector : SelectorBase
     {
         internal HasSelector(ISelector innerSelector)
-            : base(innerSelector.Specificity, PseudoClassNames.Has.StylesheetFunction(innerSelector.Text))
+            : base(innerSelector.Specificity, $"{PseudoClassNames.Separator}{PseudoClassNames.Has.StylesheetFunction(innerSelector.Text)}")
         {
             InnerSelector = innerSelector;
         }

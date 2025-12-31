@@ -46,7 +46,7 @@ namespace ExCSS
                 : null;
         }
 
-        private sealed class PeriodicValue : IPropertyValue
+        private sealed class PeriodicValue : IPropertyValue, ITypedPropertyValue
         {
             private readonly string[] _labels;
             private readonly IPropertyValue[] _values;
@@ -126,6 +126,27 @@ namespace ExCSS
                 }
 
                 return null;
+            }
+
+            public object GetValue()
+            {
+                var styleValues = new List<IStyleValue>();
+                foreach (var propValue in _values)
+                {
+                    if (propValue is ITypedPropertyValue typed)
+                    {
+                        var val = typed.GetValue();
+                        if (val is IStyleValue sv)
+                            styleValues.Add(sv);
+                        else
+                            styleValues.Add(new RawValue(propValue.CssText));
+                    }
+                    else
+                    {
+                        styleValues.Add(new RawValue(propValue.CssText));
+                    }
+                }
+                return new StyleValueTuple(styleValues);
             }
         }
     }

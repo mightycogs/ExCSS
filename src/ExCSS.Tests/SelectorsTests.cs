@@ -71,7 +71,7 @@ public class SelectorsTests
 
     [Theory]
     [InlineData(false, false, 277)]
-    [InlineData(false, true, 0)]
+    [InlineData(false, true, 6)]  // vendor pseudo-elements are valid (in whitelist), not invalid
     [InlineData(true, false, 277)]
     [InlineData(true, true, 6)]
     public async Task FindAllStandardPseudoElementSelectors(bool allowInvalidSelectors,

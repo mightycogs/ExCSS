@@ -68,6 +68,7 @@ namespace ExCSS
             AddLonghand(PropertyNames.BreakBefore, () => new BreakBeforeProperty());
             AddLonghand(PropertyNames.BreakInside, () => new BreakInsideProperty());
             AddLonghand(PropertyNames.BackfaceVisibility, () => new BackfaceVisibilityProperty());
+            AddLonghand(PropertyNames.BackdropFilter, () => new BackdropFilterProperty());
 
             AddShorthand(PropertyNames.BorderRadius, () => new BorderRadiusProperty(),
                 PropertyNames.BorderTopLeftRadius,
@@ -341,6 +342,9 @@ namespace ExCSS
             AddLonghand(PropertyNames.ZIndex, () => new ZIndexProperty(), true);
             AddLonghand(PropertyNames.ObjectFit, () => new ObjectFitProperty());
             AddLonghand(PropertyNames.ObjectPosition, () => new ObjectPositionProperty(), true);
+
+            AddLonghand(PropertyNames.WebkitBackdropFilter, () => new WebkitBackdropFilterProperty());
+            AddLonghand(PropertyNames.MozAppearance, () => new MozAppearanceProperty());
 
             _fonts.Add(PropertyNames.Src, () => new SrcProperty());
             _fonts.Add(PropertyNames.UnicodeRange, () => new UnicodeRangeProperty());

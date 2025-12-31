@@ -34,4 +34,10 @@
     <EmbeddedResource Include="bootstrap.css" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="ExtendedTestsPart1\Fixtures\**\*.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

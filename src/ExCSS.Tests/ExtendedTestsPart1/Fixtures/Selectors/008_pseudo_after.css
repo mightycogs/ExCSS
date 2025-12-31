@@ -1,0 +1,11 @@
+.part-card.selected::after {
+  content: '';
+  position: absolute;
+  right: calc(-1 * var(--card-notch-size));
+  top: 50%;
+  transform: translateY(-50%);
+  border-top: var(--card-notch-size) solid transparent;
+  border-bottom: var(--card-notch-size) solid transparent;
+  border-left: var(--card-notch-size) solid var(--accent-green);
+  z-index: var(--z-base);
+}

@@ -57,7 +57,7 @@ namespace ExCSS
             return result;
         }
 
-        private sealed class MultipleValue : IPropertyValue
+        private sealed class MultipleValue : IPropertyValue, ITypedPropertyValue
         {
             private readonly IPropertyValue[] _values;
 
@@ -95,6 +95,25 @@ namespace ExCSS
                 }
 
                 return new TokenValue(tokens);
+            }
+
+            public object GetValue()
+            {
+                var styleValues = new List<IStyleValue>();
+                foreach (var value in _values)
+                {
+                    if (value is ITypedPropertyValue typed)
+                    {
+                        var v = typed.GetValue();
+                        if (v is IStyleValue sv)
+                            styleValues.Add(sv);
+                    }
+                }
+                if (styleValues.Count == 1)
+                    return styleValues[0];
+                if (styleValues.Count > 1)
+                    return new StyleValueList(styleValues);
+                return null;
             }
         }
     }
