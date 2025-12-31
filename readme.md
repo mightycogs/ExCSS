@@ -77,9 +77,12 @@ var rule = stylesheet.StyleRules.First() as StyleRule;
 var bgColor = rule.Style.GetProperty("background-color").TypedValue as Color;
 Console.WriteLine($"R:{bgColor.R} G:{bgColor.G} B:{bgColor.B}"); // R:30 G:30 B:30
 
-// Calc expressions
+// Calc expressions with full AST
 var width = rule.Style.GetProperty("width").TypedValue as CalcValue;
-Console.WriteLine(width.Expression); // 100% - 20px
+var binary = width.Root as CalcBinaryExpression;
+var left = (binary.Left as CalcLiteralExpression).Value as Percent;   // 100%
+var right = (binary.Right as CalcLiteralExpression).Value as Length;  // 20px
+Console.WriteLine($"{left.Value}% - {right.Value}{right.UnitString}"); // 100% - 20px
 
 // CSS Variables
 var color = rule.Style.GetProperty("color").TypedValue as VarValue;
@@ -91,6 +94,8 @@ Console.WriteLine(opacity.Value); // 0.8
 ```
 
 Available typed values: `Color`, `Length`, `Percent`, `Number`, `Time`, `CalcValue`, `VarValue`, `Gradient`, `Shadow`, and more.
+
+Calc expression nodes: `CalcBinaryExpression` (+, -, *, /), `CalcLiteralExpression` (values), `CalcVarExpression` (var() refs), `CalcGroupExpression` (parentheses).
 
 ## Vendor-Prefixed Properties
 Full support for vendor-prefixed CSS properties:
