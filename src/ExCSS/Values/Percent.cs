@@ -2,7 +2,7 @@
 
 namespace ExCSS
 {
-    public struct Percent : IEquatable<Percent>, IComparable<Percent>, IFormattable
+    public struct Percent : IEquatable<Percent>, IComparable<Percent>, IFormattable, IStyleValue, IPrimitiveValue
     {
         /// <summary>
         ///     Gets a zero percent value.
@@ -26,6 +26,10 @@ namespace ExCSS
 
         public float NormalizedValue => Value * 0.01f;
         public float Value { get; }
+
+        public string CssText => ToString();
+
+        StyleValueType IStyleValue.Type => StyleValueType.Percent;
 
         /// <summary>
         ///     Compares the magnitude of two percents.

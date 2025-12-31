@@ -59,5 +59,26 @@ namespace ExCSS
         internal abstract IValueConverter Converter { get; }
 
         internal IPropertyValue DeclaredValue { get; set; }
+
+        /// <summary>
+        /// Gets the strongly-typed value of this property.
+        /// Returns null if no value is set.
+        /// </summary>
+        public IStyleValue TypedValue => StyleValueBridge.ToStyleValue(DeclaredValue);
+
+        /// <summary>
+        /// Try to get the value as a specific type.
+        /// </summary>
+        public bool TryGetValue<T>(out T value) where T : IStyleValue
+        {
+            var typed = TypedValue;
+            if (typed is T result)
+            {
+                value = result;
+                return true;
+            }
+            value = default;
+            return false;
+        }
     }
 }

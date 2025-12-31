@@ -4,6 +4,11 @@ using System.Globalization;
 
 namespace ExCSS
 {
+    internal interface ITypedPropertyValue : IPropertyValue
+    {
+        object GetValue();
+    }
+
     internal sealed class StructValueConverter<T> : IValueConverter
         where T : struct, IFormattable
     {
@@ -25,7 +30,7 @@ namespace ExCSS
             return properties.Guard<StructValue>();
         }
 
-        private sealed class StructValue : IPropertyValue
+        private sealed class StructValue : IPropertyValue, ITypedPropertyValue
         {
             private readonly T _value;
 
@@ -43,6 +48,8 @@ namespace ExCSS
             {
                 return Original;
             }
+
+            public object GetValue() => _value;
         }
     }
 }

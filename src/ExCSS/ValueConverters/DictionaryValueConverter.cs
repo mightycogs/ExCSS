@@ -25,10 +25,13 @@ namespace ExCSS
             return properties.Guard<EnumeratedValue>();
         }
 
-        private sealed class EnumeratedValue : IPropertyValue
+        private sealed class EnumeratedValue : IPropertyValue, ITypedPropertyValue
         {
+            private readonly string _value;
+
             public EnumeratedValue(string identifier, IEnumerable<Token> tokens)
             {
+                _value = identifier;
                 CssText = identifier;
                 Original = new TokenValue(tokens);
             }
@@ -41,6 +44,8 @@ namespace ExCSS
             {
                 return Original;
             }
+
+            public object GetValue() => new KeywordValue(_value);
         }
     }
 }

@@ -2,7 +2,7 @@
 
 namespace ExCSS
 {
-    public struct Resolution : IEquatable<Resolution>, IComparable<Resolution>, IFormattable
+    public struct Resolution : IEquatable<Resolution>, IComparable<Resolution>, IFormattable, IStyleValue, IPrimitiveValue
     {
         public Resolution(float value, Unit unit)
         {
@@ -12,6 +12,10 @@ namespace ExCSS
 
         public float Value { get; }
         public Unit Type { get; }
+
+        public string CssText => ToString();
+
+        StyleValueType IStyleValue.Type => StyleValueType.Resolution;
 
         public string UnitString
         {
@@ -97,7 +101,7 @@ namespace ExCSS
 
         public override int GetHashCode()
         {
-            return Value.GetHashCode();
+            return Value.GetHashCode() ^ ((int)Type << 16);
         }
 
         public override string ToString()

@@ -4,7 +4,7 @@
 
 namespace ExCSS
 {
-    public struct Number : IEquatable<Number>, IComparable<Number>, IFormattable
+    public struct Number : IEquatable<Number>, IComparable<Number>, IFormattable, IStyleValue, IPrimitiveValue
     {
         /// <summary>
         ///     Gets a zero value.
@@ -31,6 +31,10 @@ namespace ExCSS
 
         public float Value { get; }
         public bool IsInteger => _unit == Unit.Integer;
+
+        public string CssText => ToString();
+
+        StyleValueType IStyleValue.Type => StyleValueType.Number;
 
         public static bool operator >=(Number a, Number b)
         {

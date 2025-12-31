@@ -7,7 +7,7 @@ using System.Runtime.InteropServices;
 namespace ExCSS
 {
     [StructLayout(LayoutKind.Explicit, Pack = 1, CharSet = CharSet.Unicode)]
-    public struct Color : IEquatable<Color>, IComparable<Color>, IFormattable
+    public struct Color : IEquatable<Color>, IComparable<Color>, IFormattable, IStyleValue, IPrimitiveValue
     {
         [FieldOffset(0)] private readonly byte _alpha;
         [FieldOffset(1)] private readonly byte _red;
@@ -274,6 +274,10 @@ namespace ExCSS
         public byte R => _red;
         public byte G => _green;
         public byte B => _blue;
+
+        public string CssText => ToString();
+
+        StyleValueType IStyleValue.Type => StyleValueType.Color;
 
         public static bool operator ==(Color a, Color b)
         {

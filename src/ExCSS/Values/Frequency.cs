@@ -4,7 +4,7 @@
 
 namespace ExCSS
 {
-    public struct Frequency : IEquatable<Frequency>, IComparable<Frequency>, IFormattable
+    public struct Frequency : IEquatable<Frequency>, IComparable<Frequency>, IFormattable, IStyleValue, IPrimitiveValue
     {
         public Frequency(float value, Unit unit)
         {
@@ -14,6 +14,10 @@ namespace ExCSS
 
         public float Value { get; }
         public Unit Type { get; }
+
+        public string CssText => ToString();
+
+        StyleValueType IStyleValue.Type => StyleValueType.Frequency;
 
         public string UnitString
         {
@@ -123,7 +127,7 @@ namespace ExCSS
 
         public override int GetHashCode()
         {
-            return Value.GetHashCode();
+            return Value.GetHashCode() ^ ((int)Type << 16);
         }
 
         public override string ToString()

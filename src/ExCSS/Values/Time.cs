@@ -2,7 +2,7 @@
 
 namespace ExCSS
 {
-    public struct Time : IEquatable<Time>, IComparable<Time>, IFormattable
+    public struct Time : IEquatable<Time>, IComparable<Time>, IFormattable, IStyleValue, IPrimitiveValue
     {
         public static readonly Time Zero = new(0f, Unit.Ms);
 
@@ -14,6 +14,10 @@ namespace ExCSS
 
         public float Value { get; }
         public Unit Type { get; }
+
+        public string CssText => ToString();
+
+        StyleValueType IStyleValue.Type => StyleValueType.Time;
 
         public string UnitString
         {
@@ -132,7 +136,7 @@ namespace ExCSS
         /// <returns>The integer value of the hashcode.</returns>
         public override int GetHashCode()
         {
-            return Value.GetHashCode();
+            return Value.GetHashCode() ^ ((int)Type << 16);
         }
 
         /// <summary>

@@ -5,7 +5,7 @@
 
 namespace ExCSS
 {
-    public struct Length : IEquatable<Length>, IComparable<Length>, IFormattable
+    public struct Length : IEquatable<Length>, IComparable<Length>, IFormattable, IStyleValue, IPrimitiveValue
     {
         /// <summary>
         ///     Gets a zero pixel length value.
@@ -71,6 +71,10 @@ namespace ExCSS
         ///     Gets the value of the length.
         /// </summary>
         public float Value { get; }
+
+        public string CssText => ToString();
+
+        StyleValueType IStyleValue.Type => StyleValueType.Length;
 
         /// <summary>
         ///     Gets the representation of the unit as a string.

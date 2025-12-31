@@ -4,7 +4,7 @@
 
 namespace ExCSS
 {
-    public struct Angle : IEquatable<Angle>, IComparable<Angle>, IFormattable
+    public struct Angle : IEquatable<Angle>, IComparable<Angle>, IFormattable, IStyleValue, IPrimitiveValue
     {
         public static readonly Angle Zero = new(0f, Unit.Rad);
         public static readonly Angle HalfQuarter = new(45f, Unit.Deg);
@@ -20,6 +20,10 @@ namespace ExCSS
 
         public float Value { get; }
         public Unit Type { get; }
+
+        public string CssText => ToString();
+
+        StyleValueType IStyleValue.Type => StyleValueType.Angle;
 
         public string UnitString
         {
@@ -188,7 +192,7 @@ namespace ExCSS
         /// <returns>The integer value of the hashcode.</returns>
         public override int GetHashCode()
         {
-            return (int) Value;
+            return Value.GetHashCode() ^ ((int)Type << 16);
         }
 
         public override string ToString()
