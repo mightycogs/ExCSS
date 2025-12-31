@@ -103,8 +103,17 @@ namespace ExCSS
 
         private static CalcValue ExtractCalcValue(FunctionToken function)
         {
-            var expression = function.ArgumentTokens.ToText();
-            return new CalcValue(expression);
+            var tokens = Enumerable.ToList(function.ArgumentTokens);
+            var parser = new CalcExpressionParser(tokens);
+            var root = parser.Parse();
+
+            if (root == null)
+            {
+                var expression = function.ArgumentTokens.ToText();
+                root = new CalcRawExpression(expression);
+            }
+
+            return new CalcValue(root);
         }
 
         private static bool IsGradientFunction(string name)
@@ -203,7 +212,7 @@ namespace ExCSS
                     if (function.Data.Equals(FunctionNames.Var, StringComparison.OrdinalIgnoreCase))
                         return ExtractVarValueStatic(function);
                     if (function.Data.Equals(FunctionNames.Calc, StringComparison.OrdinalIgnoreCase))
-                        return new CalcValue(function.ArgumentTokens.ToText());
+                        return ExtractCalcValue(function);
                     if (IsGradientFunction(function.Data))
                         return new GradientFunctionValue(function.Data, function.ArgumentTokens.ToText());
                     return new FunctionValue(function.Data, function.ArgumentTokens.ToText());
@@ -249,7 +258,7 @@ namespace ExCSS
                     if (function.Data.Equals(FunctionNames.Var, StringComparison.OrdinalIgnoreCase))
                         return ExtractVarValueStatic(function);
                     if (function.Data.Equals(FunctionNames.Calc, StringComparison.OrdinalIgnoreCase))
-                        return new CalcValue(function.ArgumentTokens.ToText());
+                        return ExtractCalcValue(function);
                     if (IsGradientFunction(function.Data))
                         return new GradientFunctionValue(function.Data, function.ArgumentTokens.ToText());
                 }

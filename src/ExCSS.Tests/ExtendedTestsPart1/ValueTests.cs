@@ -334,5 +334,117 @@ namespace ExCSS.Tests.ExtendedTestsPart1
             Assert.NotNull(flexWrap);
             Assert.Equal("wrap", flexWrap.Value);
         }
+
+        [Fact]
+        public void Parse_CalcSubtraction_HasTypedAST()
+        {
+            var sheet = ParseFixture("Values", "022_calc_subtraction.css");
+            var rule = GetSingleStyleRule(sheet);
+            var widthProp = rule.Style.GetProperty("width");
+
+            Assert.NotNull(widthProp);
+            var calcValue = widthProp.TypedValue as CalcValue;
+            Assert.NotNull(calcValue);
+            Assert.NotNull(calcValue.Root);
+
+            var binary = Assert.IsType<CalcBinaryExpression>(calcValue.Root);
+            Assert.Equal(CalcOperator.Subtract, binary.Operator);
+
+            var left = Assert.IsType<CalcLiteralExpression>(binary.Left);
+            var leftPercent = Assert.IsType<Percent>(left.Value);
+            Assert.Equal(100d, leftPercent.Value);
+
+            var right = Assert.IsType<CalcLiteralExpression>(binary.Right);
+            var rightLength = Assert.IsType<Length>(right.Value);
+            Assert.Equal(20d, rightLength.Value);
+            Assert.Equal(Length.Unit.Px, rightLength.Type);
+        }
+
+        [Fact]
+        public void Parse_CalcMultiplication_HasTypedAST()
+        {
+            var sheet = ParseFixture("Values", "023_calc_multiplication.css");
+            var rule = GetSingleStyleRule(sheet);
+            var widthProp = rule.Style.GetProperty("width");
+
+            Assert.NotNull(widthProp);
+            var calcValue = widthProp.TypedValue as CalcValue;
+            Assert.NotNull(calcValue);
+            Assert.NotNull(calcValue.Root);
+
+            var binary = Assert.IsType<CalcBinaryExpression>(calcValue.Root);
+            Assert.Equal(CalcOperator.Multiply, binary.Operator);
+
+            var left = Assert.IsType<CalcLiteralExpression>(binary.Left);
+            var leftPercent = Assert.IsType<Percent>(left.Value);
+            Assert.Equal(50d, leftPercent.Value);
+
+            var right = Assert.IsType<CalcLiteralExpression>(binary.Right);
+            var rightNumber = Assert.IsType<Number>(right.Value);
+            Assert.Equal(2d, rightNumber.Value);
+        }
+
+        [Fact]
+        public void Parse_CalcWithVar_HasTypedAST()
+        {
+            var sheet = ParseFixture("Values", "024_calc_with_var_subtract.css");
+            var rule = GetSingleStyleRule(sheet);
+            var marginProp = rule.Style.GetProperty("margin");
+
+            Assert.NotNull(marginProp);
+            var calcValue = marginProp.TypedValue as CalcValue;
+            Assert.NotNull(calcValue);
+            Assert.NotNull(calcValue.Root);
+
+            var binary = Assert.IsType<CalcBinaryExpression>(calcValue.Root);
+            Assert.Equal(CalcOperator.Subtract, binary.Operator);
+
+            var left = Assert.IsType<CalcLiteralExpression>(binary.Left);
+            Assert.IsType<Percent>(left.Value);
+
+            var right = Assert.IsType<CalcVarExpression>(binary.Right);
+            Assert.Equal("--spacing", right.Variable.VariableName);
+        }
+
+        [Fact]
+        public void Parse_CalcDivision_HasTypedAST()
+        {
+            var sheet = Parser.Parse(".element { width: calc(100% / 2); }");
+            var rule = GetSingleStyleRule(sheet);
+            var widthProp = rule.Style.GetProperty("width");
+
+            Assert.NotNull(widthProp);
+            var calcValue = widthProp.TypedValue as CalcValue;
+            Assert.NotNull(calcValue);
+            Assert.NotNull(calcValue.Root);
+
+            var divideExpr = Assert.IsType<CalcBinaryExpression>(calcValue.Root);
+            Assert.Equal(CalcOperator.Divide, divideExpr.Operator);
+
+            var left = Assert.IsType<CalcLiteralExpression>(divideExpr.Left);
+            Assert.IsType<Percent>(left.Value);
+
+            var right = Assert.IsType<CalcLiteralExpression>(divideExpr.Right);
+            var rightNumber = Assert.IsType<Number>(right.Value);
+            Assert.Equal(2d, rightNumber.Value);
+        }
+
+        [Fact]
+        public void Parse_CalcSimpleLength_HasTypedAST()
+        {
+            var sheet = ParseFixture("Values", "026_calc_simple_length.css");
+            var rule = GetSingleStyleRule(sheet);
+            var widthProp = rule.Style.GetProperty("width");
+
+            Assert.NotNull(widthProp);
+            var calcValue = widthProp.TypedValue as CalcValue;
+            Assert.NotNull(calcValue);
+            Assert.NotNull(calcValue.Root);
+
+            var literal = Assert.IsType<CalcLiteralExpression>(calcValue.Root);
+            var length = Assert.IsType<Length>(literal.Value);
+            Assert.Equal(10d, length.Value);
+            Assert.Equal(Length.Unit.Px, length.Type);
+        }
     }
 }
