@@ -1,0 +1,8 @@
+.menu-indicator {
+  opacity: 0;
+  transition: opacity var(--transition-normal);
+}
+
+.menu-indicator.visible {
+  opacity: 1;
+}

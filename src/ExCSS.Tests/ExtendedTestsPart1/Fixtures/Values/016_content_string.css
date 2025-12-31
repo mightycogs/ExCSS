@@ -1,0 +1,4 @@
+.indicator-arrow::before {
+  content: '▶';
+  font-size: 12px;
+}

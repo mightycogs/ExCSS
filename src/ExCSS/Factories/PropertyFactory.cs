@@ -345,6 +345,16 @@ namespace ExCSS
 
             AddLonghand(PropertyNames.WebkitBackdropFilter, () => new WebkitBackdropFilterProperty());
             AddLonghand(PropertyNames.MozAppearance, () => new MozAppearanceProperty());
+            AddLonghand(PropertyNames.Appearance, () => new AppearanceProperty());
+            AddLonghand(PropertyNames.WebkitAppearance, () => new WebkitAppearanceProperty());
+            AddLonghand(PropertyNames.WebkitLineClamp, () => new WebkitLineClampProperty());
+            AddLonghand(PropertyNames.WebkitBoxOrient, () => new WebkitBoxOrientProperty());
+            AddLonghand(PropertyNames.WebkitFontSmoothing, () => new WebkitFontSmoothingProperty());
+            AddLonghand(PropertyNames.MozOsxFontSmoothing, () => new MozOsxFontSmoothingProperty());
+            AddLonghand(PropertyNames.UserSelect, () => new UserSelectProperty());
+            AddLonghand(PropertyNames.OverflowX, () => new OverflowXProperty());
+            AddLonghand(PropertyNames.OverflowY, () => new OverflowYProperty());
+            AddLonghand(PropertyNames.PointerEvents, () => new PointerEventsProperty());
 
             _fonts.Add(PropertyNames.Src, () => new SrcProperty());
             _fonts.Add(PropertyNames.UnicodeRange, () => new UnicodeRangeProperty());

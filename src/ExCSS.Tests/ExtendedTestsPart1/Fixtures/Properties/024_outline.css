@@ -1,0 +1,9 @@
+.slider {
+  flex: 2;
+  -webkit-appearance: none;
+  appearance: none;
+  height: 4px;
+  background: var(--border-color);
+  outline: none;
+  border-radius: var(--radius-sm);
+}

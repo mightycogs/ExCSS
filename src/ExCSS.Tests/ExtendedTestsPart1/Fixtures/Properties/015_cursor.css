@@ -1,0 +1,7 @@
+.menu-btn {
+  cursor: pointer;
+}
+
+.part-card.locked {
+  cursor: not-allowed;
+}

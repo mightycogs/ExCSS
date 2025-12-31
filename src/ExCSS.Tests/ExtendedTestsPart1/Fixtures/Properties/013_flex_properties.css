@@ -1,0 +1,8 @@
+.shop-grid-big {
+  display: flex;
+  flex-wrap: wrap;
+  align-content: flex-start;
+  align-items: flex-start;
+  justify-content: flex-start;
+  flex: 1 1 0;
+}

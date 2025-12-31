@@ -1,0 +1,8 @@
+.modal-dialog {
+  background-color: var(--panel-bg);
+  padding: var(--spacing-xl);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-color);
+  min-width: 400px;
+  box-shadow: var(--shadow-lg);
+}

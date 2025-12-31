@@ -21,9 +21,16 @@ namespace ExCSS
             string.Equals(Arguments, other.Arguments, StringComparison.Ordinal);
 
         public override bool Equals(object obj) => obj is FunctionValue other && Equals(other);
-        public override int GetHashCode() => HashCode.Combine(
-            StringComparer.OrdinalIgnoreCase.GetHashCode(Name ?? string.Empty),
-            Arguments?.GetHashCode() ?? 0);
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                var hash = 17;
+                hash = hash * 31 + StringComparer.OrdinalIgnoreCase.GetHashCode(Name ?? string.Empty);
+                hash = hash * 31 + (Arguments?.GetHashCode() ?? 0);
+                return hash;
+            }
+        }
         public override string ToString() => CssText;
 
         public static bool operator ==(FunctionValue left, FunctionValue right) => left.Equals(right);

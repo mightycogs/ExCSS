@@ -1,0 +1,6 @@
+.main-menu h1 {
+  font-size: var(--font-size-xl);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  font-weight: 600;
+}

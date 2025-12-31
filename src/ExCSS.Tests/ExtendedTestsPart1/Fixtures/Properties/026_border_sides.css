@@ -1,0 +1,5 @@
+.part-card.selected::after {
+  border-top: var(--card-notch-size) solid transparent;
+  border-bottom: var(--card-notch-size) solid transparent;
+  border-left: var(--card-notch-size) solid var(--accent-green);
+}

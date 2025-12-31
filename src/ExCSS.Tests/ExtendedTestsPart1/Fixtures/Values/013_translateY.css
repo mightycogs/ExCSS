@@ -1,0 +1,4 @@
+.big-part-card.selected {
+  position: relative;
+  transform: translateY(calc(-1 * var(--card-notch-size)));
+}

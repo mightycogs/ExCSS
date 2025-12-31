@@ -16,16 +16,24 @@ namespace ExCSS
 
         public override void ToCss(TextWriter writer, IStyleFormatter formatter)
         {
-            var a = Step.ToString();
-
-            var b = Offset switch
+            string formula;
+            if (Step == 0)
             {
-                > 0 => "+" + Offset,
-                < 0 => Offset.ToString(),
-                _ => string.Empty
-            };
+                formula = Offset.ToString();
+            }
+            else
+            {
+                var a = Step == 1 ? string.Empty : (Step == -1 ? "-" : Step.ToString());
+                var b = Offset switch
+                {
+                    > 0 => "+" + Offset,
+                    < 0 => Offset.ToString(),
+                    _ => string.Empty
+                };
+                formula = $"{a}n{b}";
+            }
 
-            writer.Write(":{0}({1}n{2})", _name, a, b);
+            writer.Write(":{0}({1})", _name, formula);
         }
 
         public Priority Specificity => Priority.OneClass;

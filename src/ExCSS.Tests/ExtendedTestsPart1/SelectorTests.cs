@@ -110,5 +110,108 @@ namespace ExCSS.Tests.ExtendedTestsPart1
             Assert.Contains(":not(.locked)", selectorText);
             Assert.Contains(":not(.selected)", selectorText);
         }
+
+        [Fact]
+        public void Parse_WebkitScrollbarTrack_PseudoElementSelector()
+        {
+            var sheet = ParseFixture("Selectors", "009_webkit_scrollbar_track.css");
+            var rule = GetSingleStyleRule(sheet);
+
+            Assert.IsType<PseudoElementSelector>(rule.Selector);
+            var pseudoElement = (PseudoElementSelector)rule.Selector;
+            Assert.Equal("-webkit-scrollbar-track", pseudoElement.Name);
+        }
+
+        [Fact]
+        public void Parse_WebkitScrollbarThumbHover_CompoundSelector()
+        {
+            var sheet = ParseFixture("Selectors", "010_webkit_scrollbar_thumb_hover.css");
+            var rule = GetSingleStyleRule(sheet);
+
+            Assert.IsType<CompoundSelector>(rule.Selector);
+            var selectorText = rule.Selector.Text;
+            Assert.Contains("-webkit-scrollbar-thumb", selectorText);
+            Assert.Contains(":hover", selectorText);
+        }
+
+        [Fact]
+        public void Parse_WebkitSliderThumb_CompoundSelector()
+        {
+            var sheet = ParseFixture("Selectors", "011_webkit_slider_thumb.css");
+            var rule = GetSingleStyleRule(sheet);
+
+            Assert.IsType<CompoundSelector>(rule.Selector);
+            var selectorText = rule.Selector.Text;
+            Assert.Contains("-webkit-slider-thumb", selectorText);
+        }
+
+        [Fact]
+        public void Parse_MozRangeThumb_CompoundSelector()
+        {
+            var sheet = ParseFixture("Selectors", "012_moz_range_thumb.css");
+            var rule = GetSingleStyleRule(sheet);
+
+            Assert.IsType<CompoundSelector>(rule.Selector);
+            var selectorText = rule.Selector.Text;
+            Assert.Contains("-moz-range-thumb", selectorText);
+        }
+
+        [Fact]
+        public void Parse_WebkitSpinButton_ListSelector()
+        {
+            var sheet = ParseFixture("Selectors", "013_webkit_spin_button.css");
+            var rule = GetSingleStyleRule(sheet);
+
+            Assert.IsType<ListSelector>(rule.Selector);
+            var listSelector = (ListSelector)rule.Selector;
+            Assert.Equal(2, listSelector.Length);
+
+            var selectorText = rule.Selector.Text;
+            Assert.Contains("-webkit-outer-spin-button", selectorText);
+            Assert.Contains("-webkit-inner-spin-button", selectorText);
+        }
+
+        [Fact]
+        public void Parse_PseudoBefore_CompoundSelectorWithPseudoElement()
+        {
+            var sheet = ParseFixture("Selectors", "014_pseudo_before.css");
+            var rule = GetSingleStyleRule(sheet);
+
+            Assert.IsType<CompoundSelector>(rule.Selector);
+            var compound = (CompoundSelector)rule.Selector;
+
+            var hasBefore = compound.OfType<PseudoElementSelector>().Any(p => p.Name == "before");
+            Assert.True(hasBefore);
+        }
+
+        [Fact]
+        public void Parse_Focus_HasFocusPseudoClass()
+        {
+            var sheet = ParseFixture("Selectors", "015_focus.css");
+            var rule = GetSingleStyleRule(sheet);
+
+            var selectorText = rule.Selector.Text;
+            Assert.Contains(":focus", selectorText);
+        }
+
+        [Fact]
+        public void Parse_LastChild_HasPseudoClass()
+        {
+            var sheet = ParseFixture("Selectors", "016_last_child.css");
+            var rule = GetSingleStyleRule(sheet);
+
+            var selectorText = rule.Selector.Text;
+            Assert.Contains("last-child", selectorText);
+        }
+
+        [Fact]
+        public void Parse_NthChildN_ComplexSelector()
+        {
+            var sheet = ParseFixture("Selectors", "017_nth_child_n.css");
+            var rule = GetSingleStyleRule(sheet);
+
+            var selectorText = rule.Selector.Text;
+            Assert.Contains(":nth-child(n)", selectorText);
+        }
     }
 }

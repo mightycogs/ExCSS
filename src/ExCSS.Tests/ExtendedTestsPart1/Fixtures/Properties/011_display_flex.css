@@ -1,0 +1,8 @@
+.card-lock-overlay {
+  position: absolute;
+  inset: 0;
+  background-color: var(--card-lock-bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

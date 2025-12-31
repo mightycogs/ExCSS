@@ -1,0 +1,1 @@
+.shop-grid-big > *:nth-child(n) { margin-right: var(--spacing-lg); }

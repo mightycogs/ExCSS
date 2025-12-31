@@ -207,5 +207,132 @@ namespace ExCSS.Tests.ExtendedTestsPart1
             Assert.IsNotType<RawValue>(typedValue);
             Assert.IsType<VarValue>(typedValue);
         }
+
+        [Fact]
+        public void Parse_TranslateY_CalcValue()
+        {
+            var sheet = ParseFixture("Values", "013_translateY.css");
+            var rule = GetSingleStyleRule(sheet);
+            var transformProp = rule.Style.GetProperty("transform");
+
+            Assert.NotNull(transformProp);
+            var typedValue = transformProp.TypedValue;
+            Assert.NotNull(typedValue);
+            Assert.IsNotType<RawValue>(typedValue);
+            Assert.Contains("translateY", transformProp.Value);
+        }
+
+        [Fact]
+        public void Parse_TranslateX_NotRawValue()
+        {
+            var sheet = ParseFixture("Values", "014_translateX.css");
+            var rule = GetSingleStyleRule(sheet);
+            var transformProp = rule.Style.GetProperty("transform");
+
+            Assert.NotNull(transformProp);
+            var typedValue = transformProp.TypedValue;
+            Assert.NotNull(typedValue);
+            Assert.IsNotType<RawValue>(typedValue);
+            Assert.Contains("translateX", transformProp.Value);
+        }
+
+        [Fact]
+        public void Parse_ContentEmpty_StringValue()
+        {
+            var sheet = ParseFixture("Values", "015_content_empty.css");
+            var rule = GetSingleStyleRule(sheet);
+            var contentProp = rule.Style.GetProperty("content");
+
+            Assert.NotNull(contentProp);
+            Assert.True(contentProp.HasValue);
+            // CSS '' and "" are semantically equivalent - parser normalizes to double quotes
+            Assert.True(contentProp.Value == "\"\"" || contentProp.Value == "''",
+                $"Expected empty string ('\"\"' or '\\'\\''), got '{contentProp.Value}'");
+        }
+
+        [Fact]
+        public void Parse_ContentString_StringValue()
+        {
+            var sheet = ParseFixture("Values", "016_content_string.css");
+            var rule = GetSingleStyleRule(sheet);
+            var contentProp = rule.Style.GetProperty("content");
+
+            Assert.NotNull(contentProp);
+            Assert.True(contentProp.HasValue);
+            Assert.Contains("▶", contentProp.Value);
+        }
+
+        [Fact]
+        public void Parse_NoneKeyword_IdentValue()
+        {
+            var sheet = ParseFixture("Values", "017_none_keyword.css");
+            var rule = GetSingleStyleRule(sheet);
+            var borderProp = rule.Style.GetProperty("border");
+
+            Assert.NotNull(borderProp);
+            Assert.Equal("none", borderProp.Value);
+        }
+
+        [Fact]
+        public void Parse_AutoKeyword_IdentValue()
+        {
+            var sheet = ParseFixture("Values", "018_auto_keyword.css");
+            var rule = GetSingleStyleRule(sheet);
+            var minWidthProp = rule.Style.GetProperty("min-width");
+
+            Assert.NotNull(minWidthProp);
+            Assert.Equal("auto", minWidthProp.Value);
+        }
+
+        [Fact]
+        public void Parse_HiddenVisible_Keywords()
+        {
+            var sheet = ParseFixture("Values", "019_hidden_visible.css");
+            var rules = sheet.Rules.OfType<StyleRule>().ToList();
+            Assert.Equal(2, rules.Count);
+
+            var visibleProp = rules[0].Style.GetProperty("overflow");
+            Assert.NotNull(visibleProp);
+            Assert.Equal("visible", visibleProp.Value);
+
+            var hiddenProp = rules[1].Style.GetProperty("overflow");
+            Assert.NotNull(hiddenProp);
+            Assert.Equal("hidden", hiddenProp.Value);
+        }
+
+        [Fact]
+        public void Parse_PositionAbsolute_IdentValue()
+        {
+            var sheet = ParseFixture("Values", "020_position_values.css");
+            var rules = sheet.Rules.OfType<StyleRule>().ToList();
+            Assert.Equal(3, rules.Count);
+
+            var absoluteProp = rules[0].Style.GetProperty("position");
+            Assert.NotNull(absoluteProp);
+            Assert.Equal("absolute", absoluteProp.Value);
+
+            var fixedProp = rules[1].Style.GetProperty("position");
+            Assert.NotNull(fixedProp);
+            Assert.Equal("fixed", fixedProp.Value);
+
+            var relativeProp = rules[2].Style.GetProperty("position");
+            Assert.NotNull(relativeProp);
+            Assert.Equal("relative", relativeProp.Value);
+        }
+
+        [Fact]
+        public void Parse_FlexStartEndWrap_Keywords()
+        {
+            var sheet = ParseFixture("Values", "021_flex_values.css");
+            var rule = GetSingleStyleRule(sheet);
+
+            var alignContent = rule.Style.GetProperty("align-content");
+            Assert.NotNull(alignContent);
+            Assert.Equal("flex-start", alignContent.Value);
+
+            var flexWrap = rule.Style.GetProperty("flex-wrap");
+            Assert.NotNull(flexWrap);
+            Assert.Equal("wrap", flexWrap.Value);
+        }
     }
 }

@@ -1,0 +1,8 @@
+.slider::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  background: var(--text-primary);
+  cursor: pointer;
+  border-radius: 50%;
+  border: 2px solid var(--accent-green);
+}

@@ -1,0 +1,5 @@
+.cheat-input::-webkit-outer-spin-button,
+.cheat-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}

@@ -1,0 +1,7 @@
+.inline-selector-arrow {
+  color: var(--text-primary);
+  cursor: pointer;
+  padding: 0 var(--spacing-sm);
+  user-select: none;
+  font-size: var(--font-size-md);
+}

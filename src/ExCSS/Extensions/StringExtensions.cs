@@ -34,8 +34,13 @@ namespace ExCSS
 
         public static string StylesheetString(this string value)
         {
+            return StylesheetString(value, Symbols.DoubleQuote);
+        }
+
+        public static string StylesheetString(this string value, char quoteChar)
+        {
             var builder = Pool.NewStringBuilder();
-            builder.Append(Symbols.DoubleQuote);
+            builder.Append(quoteChar);
 
             if (!string.IsNullOrEmpty(value))
                 for (var i = 0; i < value.Length; i++)
@@ -46,12 +51,15 @@ namespace ExCSS
                     {
                         case Symbols.Null:
                             throw new ParseException("Unable to parse null symbol");
-                        case Symbols.DoubleQuote:
                         case Symbols.ReverseSolidus:
                             builder.Append(Symbols.ReverseSolidus).Append(character);
                             break;
                         default:
-                            if (character.IsInRange(Symbols.StartOfHeading, Symbols.UnitSeparator)
+                            if (character == quoteChar)
+                            {
+                                builder.Append(Symbols.ReverseSolidus).Append(character);
+                            }
+                            else if (character.IsInRange(Symbols.StartOfHeading, Symbols.UnitSeparator)
                                 || character == Symbols.CurlyBracketOpen)
                             {
                                 builder.Append(Symbols.ReverseSolidus)
@@ -67,7 +75,7 @@ namespace ExCSS
                     }
                 }
 
-            builder.Append(Symbols.DoubleQuote);
+            builder.Append(quoteChar);
             return builder.ToPool();
         }
 

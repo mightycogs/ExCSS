@@ -1,0 +1,5 @@
+.menu-item.effect-scale.hovered .menu-item-text,
+.menu-item.effect-scale.focused .menu-item-text {
+  transform: scale(1.1);
+  transform-origin: left center;
+}

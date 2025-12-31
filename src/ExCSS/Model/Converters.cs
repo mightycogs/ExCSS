@@ -70,6 +70,9 @@ namespace ExCSS
         public static readonly IValueConverter LengthOrPercentConverter =
             LengthConverter.Or(PercentConverter);
 
+        public static readonly IValueConverter LengthOrPercentOrCalcConverter =
+            LengthOrPercentConverter.Or(new CalcValueConverter()).Or(new VarValueConverter());
+
         public static readonly IValueConverter PercentOrFractionConverter =
             new StructValueConverter<Percent>(ValueExtensions.ToPercentOrFraction);
 
@@ -203,13 +206,13 @@ namespace ExCSS
 
         public static readonly IValueConverter TranslateTransformConverter = Construct(() =>
         {
-            var distance = LengthOrPercentConverter.Required();
-            var option = LengthOrPercentConverter.Option(Length.Zero);
+            var distance = LengthOrPercentOrCalcConverter.Required();
+            var option = LengthOrPercentOrCalcConverter.Option(Length.Zero);
             return new FunctionValueConverter(FunctionNames.Translate, WithArgs(distance, option)).Or(
                 new FunctionValueConverter(FunctionNames.Translate3d, WithArgs(distance, option, option))).Or(
-                new FunctionValueConverter(FunctionNames.TranslateX, WithArgs(LengthOrPercentConverter))).Or(
-                new FunctionValueConverter(FunctionNames.TranslateY, WithArgs(LengthOrPercentConverter))).Or(
-                new FunctionValueConverter(FunctionNames.TranslateZ, WithArgs(LengthOrPercentConverter)));
+                new FunctionValueConverter(FunctionNames.TranslateX, WithArgs(LengthOrPercentOrCalcConverter))).Or(
+                new FunctionValueConverter(FunctionNames.TranslateY, WithArgs(LengthOrPercentOrCalcConverter))).Or(
+                new FunctionValueConverter(FunctionNames.TranslateZ, WithArgs(LengthOrPercentOrCalcConverter)));
         });
 
         public static readonly IValueConverter ScaleTransformConverter = Construct(() =>

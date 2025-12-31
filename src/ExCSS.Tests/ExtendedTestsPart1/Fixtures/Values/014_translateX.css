@@ -1,0 +1,4 @@
+.big-part-card.selected::after {
+  left: 50%;
+  transform: translateX(-50%);
+}
