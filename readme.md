@@ -61,11 +61,64 @@ var root = stylesheet.StyleRules.First() as StyleRule;
 var primary = root.Style.GetPropertyValue("--primary"); // #007bff
 ```
 
+## Strongly-Typed Values
+Access parsed values as typed objects instead of strings:
+```cs
+var stylesheet = parser.Parse(@"
+.box {
+    background-color: rgba(30, 30, 30, 0.95);
+    width: calc(100% - 20px);
+    color: var(--accent);
+    opacity: 0.8;
+}");
+var rule = stylesheet.StyleRules.First() as StyleRule;
+
+// Color with RGBA components
+var bgColor = rule.Style.GetProperty("background-color").TypedValue as Color;
+Console.WriteLine($"R:{bgColor.R} G:{bgColor.G} B:{bgColor.B}"); // R:30 G:30 B:30
+
+// Calc expressions
+var width = rule.Style.GetProperty("width").TypedValue as CalcValue;
+Console.WriteLine(width.Expression); // 100% - 20px
+
+// CSS Variables
+var color = rule.Style.GetProperty("color").TypedValue as VarValue;
+Console.WriteLine(color.VariableName); // --accent
+
+// Numeric values
+var opacity = rule.Style.GetProperty("opacity").TypedValue as Number;
+Console.WriteLine(opacity.Value); // 0.8
+```
+
+Available typed values: `Color`, `Length`, `Percent`, `Number`, `Time`, `CalcValue`, `VarValue`, `Gradient`, `Shadow`, and more.
+
+## Vendor-Prefixed Properties
+Full support for vendor-prefixed CSS properties:
+```cs
+var stylesheet = parser.Parse(@"
+.element {
+    -webkit-appearance: none;
+    -webkit-line-clamp: 3;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    user-select: none;
+    pointer-events: auto;
+}");
+var rule = stylesheet.StyleRules.First() as StyleRule;
+
+var appearance = rule.Style.GetPropertyValue("-webkit-appearance"); // none
+var lineClamp = rule.Style.GetPropertyValue("-webkit-line-clamp"); // 3
+```
+
+Supported vendor properties: `appearance`, `-webkit-appearance`, `-webkit-line-clamp`, `-webkit-box-orient`, `-webkit-font-smoothing`, `-moz-osx-font-smoothing`, `user-select`, `overflow-x`, `overflow-y`, `pointer-events`.
+
 ## Supported Features
-- **Properties**: `inset` shorthand, CSS Custom Properties (`var()`), all CSS3 properties
-- **Selectors**: CSS Level 3 selectors, `:not()`, `:has()`, `:matches()`, `:nth-child()`, etc.
+- **Properties**: `inset` shorthand, CSS Custom Properties (`var()`), vendor prefixes, all CSS3 properties
+- **Values**: Strongly-typed access to colors, lengths, calc(), var(), gradients, shadows
+- **Selectors**: CSS Level 3 selectors, `:not()`, `:has()`, `:matches()`, `:nth-child()`, vendor pseudo-elements
 - **At-rules**: `@media`, `@keyframes`, `@font-face`, `@supports`, `@container`
 - **AOT/Trimming**: Compatible with .NET Native AOT and IL trimming (Unity IL2CPP)
+- **Resilience**: Graceful recovery from malformed CSS without crashing
 
 ## Compatibility
 - .NET 8.0, 7.0, 6.0, Core 3.1, Framework 4.8
