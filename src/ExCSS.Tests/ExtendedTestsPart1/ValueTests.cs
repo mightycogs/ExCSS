@@ -446,5 +446,67 @@ namespace ExCSS.Tests.ExtendedTestsPart1
             Assert.Equal(10d, length.Value);
             Assert.Equal(Length.Unit.Px, length.Type);
         }
+
+        [Fact]
+        public void Shadow_TryParse_FromStyleValueList()
+        {
+            var sheet = Parser.Parse(".box { box-shadow: 0 4px 16px rgba(0,0,0,0.15); }");
+            var rule = GetSingleStyleRule(sheet);
+            var shadowProp = rule.Style.GetProperty("box-shadow");
+
+            Assert.NotNull(shadowProp);
+            var typedValue = shadowProp.TypedValue;
+            Assert.NotNull(typedValue);
+
+            var shadow = Shadow.TryParse(typedValue);
+            Assert.NotNull(shadow);
+            Assert.Equal(0f, shadow.OffsetX.Value);
+            Assert.Equal(4f, shadow.OffsetY.Value);
+            Assert.Equal(16f, shadow.BlurRadius.Value);
+            Assert.Equal(0f, shadow.SpreadRadius.Value);
+            Assert.False(shadow.IsInset);
+        }
+
+        [Fact]
+        public void Shadow_TryParse_WithInset()
+        {
+            var sheet = Parser.Parse(".box { box-shadow: inset 2px 3px 4px 5px red; }");
+            var rule = GetSingleStyleRule(sheet);
+            var shadowProp = rule.Style.GetProperty("box-shadow");
+
+            // Pass cssText to detect 'inset' keyword
+            var shadow = Shadow.TryParse(shadowProp.TypedValue, shadowProp.Value);
+            Assert.NotNull(shadow);
+            Assert.True(shadow.IsInset);
+            Assert.Equal(2f, shadow.OffsetX.Value);
+            Assert.Equal(3f, shadow.OffsetY.Value);
+            Assert.Equal(4f, shadow.BlurRadius.Value);
+            Assert.Equal(5f, shadow.SpreadRadius.Value);
+            Assert.Equal(255, shadow.Color.R);
+            Assert.Equal(0, shadow.Color.G);
+            Assert.Equal(0, shadow.Color.B);
+        }
+
+        [Fact]
+        public void Shadow_TryParse_MinimalTwoLengths()
+        {
+            var sheet = Parser.Parse(".box { box-shadow: 5px 10px; }");
+            var rule = GetSingleStyleRule(sheet);
+            var shadowProp = rule.Style.GetProperty("box-shadow");
+
+            var shadow = Shadow.TryParse(shadowProp.TypedValue);
+            Assert.NotNull(shadow);
+            Assert.Equal(5f, shadow.OffsetX.Value);
+            Assert.Equal(10f, shadow.OffsetY.Value);
+            Assert.Equal(0f, shadow.BlurRadius.Value);
+            Assert.Equal(0f, shadow.SpreadRadius.Value);
+        }
+
+        [Fact]
+        public void Shadow_TryParse_ReturnsNullForInvalidInput()
+        {
+            Assert.Null(Shadow.TryParse((IStyleValue)null));
+            Assert.Null(Shadow.TryParse(new StyleValueList(new Length(5f, Length.Unit.Px))));
+        }
     }
 }

@@ -97,6 +97,27 @@ Available typed values: `Color`, `Length`, `Percent`, `Number`, `Time`, `CalcVal
 
 Calc expression nodes: `CalcBinaryExpression` (+, -, *, /), `CalcLiteralExpression` (values), `CalcVarExpression` (var() refs), `CalcGroupExpression` (parentheses).
 
+## Shadow Parsing Helper
+Convert box-shadow values to typed `Shadow` objects:
+```cs
+var stylesheet = parser.Parse(".card { box-shadow: inset 2px 3px 4px 5px red; }");
+var rule = stylesheet.StyleRules.First() as StyleRule;
+var prop = rule.Style.GetProperty("box-shadow");
+
+var shadow = Shadow.TryParse(prop.TypedValue, prop.Value);
+Console.WriteLine($"Inset: {shadow.IsInset}");       // true
+Console.WriteLine($"OffsetX: {shadow.OffsetX}");    // 2px
+Console.WriteLine($"OffsetY: {shadow.OffsetY}");    // 3px
+Console.WriteLine($"Blur: {shadow.BlurRadius}");    // 4px
+Console.WriteLine($"Spread: {shadow.SpreadRadius}"); // 5px
+Console.WriteLine($"Color: {shadow.Color}");        // rgb(255, 0, 0)
+```
+
+For shadows without inset, the `cssText` parameter is optional:
+```cs
+var shadow = Shadow.TryParse(prop.TypedValue); // works for non-inset shadows
+```
+
 ## Vendor-Prefixed Properties
 Full support for vendor-prefixed CSS properties:
 ```cs
