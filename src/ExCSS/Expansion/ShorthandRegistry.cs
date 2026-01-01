@@ -20,6 +20,9 @@ namespace ExCSS
             Register(new InsetExpander());
             Register(new BorderExpander());
             Register(new BorderRadiusExpander());
+            Register(new FlexExpander());
+            Register(new FlexFlowExpander());
+            Register(new GapExpander());
         }
 
         /// <summary>
