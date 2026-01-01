@@ -97,6 +97,34 @@ Available typed values: `Color`, `Length`, `Percent`, `Number`, `Time`, `CalcVal
 
 Calc expression nodes: `CalcBinaryExpression` (+, -, *, /), `CalcLiteralExpression` (values), `CalcVarExpression` (var() refs), `CalcGroupExpression` (parentheses).
 
+## Gradient Typed Values
+Access gradient properties through `LinearGradient` and `RadialGradient`:
+```cs
+var stylesheet = parser.Parse(".box { background: linear-gradient(45deg, red 0%, blue 100%); }");
+var rule = stylesheet.StyleRules.First() as StyleRule;
+var prop = rule.Style.GetProperty("background");
+
+if (prop.TypedValue is LinearGradient lg)
+{
+    Console.WriteLine($"Angle: {lg.Angle}");           // 45deg
+    Console.WriteLine($"Repeating: {lg.IsRepeating}"); // false
+    foreach (var stop in lg.Stops)
+        Console.WriteLine($"  {stop.Color} at {stop.Location}");
+}
+```
+
+Radial gradients expose shape, position, and size:
+```cs
+var stylesheet = parser.Parse(".box { background: radial-gradient(circle at center, red, blue); }");
+// ...
+if (prop.TypedValue is RadialGradient rg)
+{
+    Console.WriteLine($"IsCircle: {rg.IsCircle}");     // true
+    Console.WriteLine($"Position: {rg.Position}");    // 50% 50%
+    Console.WriteLine($"SizeMode: {rg.SizeMode}");    // FarthestCorner
+}
+```
+
 ## Shadow Parsing Helper
 Convert box-shadow values to typed `Shadow` objects:
 ```cs
