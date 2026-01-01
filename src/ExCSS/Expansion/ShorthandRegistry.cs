@@ -19,6 +19,7 @@ namespace ExCSS
             Register(new BoxModelExpander("padding"));
             Register(new InsetExpander());
             Register(new BorderExpander());
+            Register(new BackgroundExpander());
             Register(new BorderRadiusExpander());
             Register(new FlexExpander());
             Register(new FlexFlowExpander());

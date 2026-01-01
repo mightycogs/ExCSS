@@ -33,24 +33,13 @@ namespace ExCSS
                 }
             }
 
-            var values = ExtractValues(value);
+            var values = ExpanderHelpers.ExtractValues(value);
             if (values.Length == 0 || values.Length > 2)
                 return result;
 
             result[RowGap] = values[0];
             result[ColumnGap] = values.Length > 1 ? values[1] : values[0];
             return result;
-        }
-
-        private static IStyleValue[] ExtractValues(IStyleValue value)
-        {
-            return value switch
-            {
-                StyleValueTuple tuple => tuple.ToArray(),
-                IReadOnlyList<IStyleValue> list => list.ToArray(),
-                null => Array.Empty<IStyleValue>(),
-                _ => new[] { value }
-            };
         }
     }
 }

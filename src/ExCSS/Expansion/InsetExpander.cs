@@ -16,7 +16,7 @@ namespace ExCSS
 
         public IReadOnlyDictionary<string, IStyleValue> Expand(IStyleValue value)
         {
-            var values = ExtractValues(value);
+            var values = ExpanderHelpers.ExtractValues(value);
             if (values.Length == 0)
                 return new Dictionary<string, IStyleValue>();
 
@@ -34,17 +34,6 @@ namespace ExCSS
                 result[Longhands[i]] = expanded[i];
             }
             return result;
-        }
-
-        private static IStyleValue[] ExtractValues(IStyleValue value)
-        {
-            return value switch
-            {
-                StyleValueTuple tuple => tuple.ToArray(),
-                IReadOnlyList<IStyleValue> list => list.ToArray(),
-                null => Array.Empty<IStyleValue>(),
-                _ => new[] { value }
-            };
         }
     }
 }

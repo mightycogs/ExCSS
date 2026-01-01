@@ -54,7 +54,7 @@ namespace ExCSS
                 }
             }
 
-            var values = ExtractValues(value);
+            var values = ExpanderHelpers.ExtractValues(value);
             if (values.Length == 0)
                 return result;
 
@@ -124,17 +124,6 @@ namespace ExCSS
         private static bool HasBasisValue(IStyleValue[] values)
         {
             return values.Any(IsBasisValue);
-        }
-
-        private static IStyleValue[] ExtractValues(IStyleValue value)
-        {
-            return value switch
-            {
-                StyleValueTuple tuple => tuple.ToArray(),
-                IReadOnlyList<IStyleValue> list => list.ToArray(),
-                null => Array.Empty<IStyleValue>(),
-                _ => new[] { value }
-            };
         }
     }
 }

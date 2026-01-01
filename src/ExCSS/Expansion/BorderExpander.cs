@@ -24,7 +24,7 @@ namespace ExCSS
         public IReadOnlyDictionary<string, IStyleValue> Expand(IStyleValue value)
         {
             var result = new Dictionary<string, IStyleValue>(StringComparer.OrdinalIgnoreCase);
-            var values = ExtractValues(value);
+            var values = ExpanderHelpers.ExtractValues(value);
 
             foreach (var v in values)
             {
@@ -67,16 +67,6 @@ namespace ExCSS
                 result["border-width"] = len;
             }
             // Otherwise could be a color name or other value
-        }
-
-        private static IStyleValue[] ExtractValues(IStyleValue value)
-        {
-            return value switch
-            {
-                IReadOnlyList<IStyleValue> list => list.ToArray(),
-                null => Array.Empty<IStyleValue>(),
-                _ => new[] { value }
-            };
         }
     }
 }
