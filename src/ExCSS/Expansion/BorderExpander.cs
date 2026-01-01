@@ -24,6 +24,14 @@ namespace ExCSS
         public IReadOnlyDictionary<string, IStyleValue> Expand(IStyleValue value)
         {
             var result = new Dictionary<string, IStyleValue>(StringComparer.OrdinalIgnoreCase);
+            if (value is KeywordValue globalKw && IsGlobalKeyword(globalKw.Value))
+            {
+                result["border-width"] = globalKw;
+                result["border-style"] = globalKw;
+                result["border-color"] = globalKw;
+                return result;
+            }
+
             var values = ExpanderHelpers.ExtractValues(value);
 
             foreach (var v in values)
@@ -52,6 +60,14 @@ namespace ExCSS
             }
 
             return result;
+        }
+
+        private static bool IsGlobalKeyword(string keyword)
+        {
+            return string.Equals(keyword, "inherit", StringComparison.OrdinalIgnoreCase) ||
+                   string.Equals(keyword, "initial", StringComparison.OrdinalIgnoreCase) ||
+                   string.Equals(keyword, "unset", StringComparison.OrdinalIgnoreCase) ||
+                   string.Equals(keyword, "revert", StringComparison.OrdinalIgnoreCase);
         }
 
         private static void ClassifyRawValue(RawValue raw, Dictionary<string, IStyleValue> result)
