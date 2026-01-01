@@ -72,6 +72,7 @@ namespace ExCSS
                 IStyleValue img = new KeywordValue("none");
                 IStyleValue pos = new StyleValueTuple(new KeywordValue("0%"), new KeywordValue("0%"));
                 IStyleValue size = new KeywordValue("auto");
+                var repeatTokens = new List<IStyleValue>();
                 IStyleValue repeat = new KeywordValue("repeat");
                 IStyleValue attach = new KeywordValue("scroll");
                 IStyleValue origin = new KeywordValue("padding-box");
@@ -94,11 +95,17 @@ namespace ExCSS
                         if (RepeatKeywords.Contains(kv))
                         {
                             if (string.Equals(kv, "repeat-x", StringComparison.OrdinalIgnoreCase))
+                            {
                                 repeat = new StyleValueTuple(new KeywordValue("repeat"), new KeywordValue("no-repeat"));
+                            }
                             else if (string.Equals(kv, "repeat-y", StringComparison.OrdinalIgnoreCase))
+                            {
                                 repeat = new StyleValueTuple(new KeywordValue("no-repeat"), new KeywordValue("repeat"));
+                            }
                             else
-                                repeat = k;
+                            {
+                                repeatTokens.Add(k);
+                            }
                             continue;
                         }
 
@@ -171,12 +178,24 @@ namespace ExCSS
                 // Finalize layer values
                 if (positionTokens.Count > 0)
                 {
-                    pos = positionTokens.Count == 1 ? positionTokens[0] : new StyleValueTuple(positionTokens);
+                    pos = positionTokens.Count == 1
+                        ? BuildDefaultedPosition(positionTokens[0])
+                        : new StyleValueTuple(positionTokens);
                 }
                 
                 if (sizeTokens.Count > 0)
                 {
                     size = sizeTokens.Count == 1 ? sizeTokens[0] : new StyleValueTuple(sizeTokens);
+                }
+
+                // Finalize repeat if two separate keywords were provided (e.g., repeat no-repeat)
+                if (repeatTokens.Count == 1)
+                {
+                    repeat = repeatTokens[0];
+                }
+                else if (repeatTokens.Count >= 2)
+                {
+                    repeat = new StyleValueTuple(repeatTokens[0], repeatTokens[1]);
                 }
 
                 if (foundOrigin && !foundClip)
@@ -210,6 +229,31 @@ namespace ExCSS
         {
             if (list.Count == 1) return list[0];
             return new StyleValueList(list);
+        }
+
+        private static IStyleValue BuildDefaultedPosition(IStyleValue token)
+        {
+            if (token is KeywordValue kw)
+            {
+                var value = kw.Value;
+                if (string.Equals(value, "center", StringComparison.OrdinalIgnoreCase))
+                    return new StyleValueTuple(kw, kw);
+
+                if (IsVerticalKeyword(value))
+                    return new StyleValueTuple(new Length(50f, Length.Unit.Percent), kw);
+
+                // Otherwise treat as horizontal keyword
+                return new StyleValueTuple(kw, new Length(50f, Length.Unit.Percent));
+            }
+
+            // Length, percentage or other positional value -> horizontal, vertical defaults to 50%
+            return new StyleValueTuple(token, new Length(50f, Length.Unit.Percent));
+        }
+
+        private static bool IsVerticalKeyword(string value)
+        {
+            return string.Equals(value, "top", StringComparison.OrdinalIgnoreCase) ||
+                   string.Equals(value, "bottom", StringComparison.OrdinalIgnoreCase);
         }
 
         private static bool IsGlobalKeyword(string keyword)

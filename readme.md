@@ -167,7 +167,7 @@ var lineClamp = rule.Style.GetPropertyValue("-webkit-line-clamp"); // 3
 Supported vendor properties: `appearance`, `-webkit-appearance`, `-webkit-line-clamp`, `-webkit-box-orient`, `-webkit-font-smoothing`, `-moz-osx-font-smoothing`, `user-select`, `overflow-x`, `overflow-y`, `pointer-events`.
 
 ## Supported Features
-- **Properties**: `inset` shorthand, CSS Custom Properties (`var()`), vendor prefixes, all CSS3 properties
+- **Properties**: `background` shorthand expansion (color, image, position/size, repeat, attachment, origin/clip), `inset` shorthand, CSS Custom Properties (`var()`), vendor prefixes, all CSS3 properties
 - **Values**: Strongly-typed access to colors, lengths, calc(), var(), gradients, shadows
 - **Selectors**: CSS Level 3 selectors, `:not()`, `:has()`, `:matches()`, `:nth-child()`, vendor pseudo-elements
 - **At-rules**: `@media`, `@keyframes`, `@font-face`, `@supports`, `@container`
