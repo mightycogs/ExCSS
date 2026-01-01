@@ -57,17 +57,13 @@ namespace ExCSS
 
             public object GetValue()
             {
-                if (IsGradientFunction(_name))
-                    return new GradientFunctionValue(_name, _arguments.CssText);
+                if (_arguments is ITypedPropertyValue typed)
+                {
+                    var inner = typed.GetValue();
+                    if (inner is IStyleValue)
+                        return inner;
+                }
                 return new ExCSS.FunctionValue(_name, _arguments.CssText);
-            }
-
-            private static bool IsGradientFunction(string name)
-            {
-                return name.Equals(FunctionNames.LinearGradient, StringComparison.OrdinalIgnoreCase) ||
-                       name.Equals(FunctionNames.RadialGradient, StringComparison.OrdinalIgnoreCase) ||
-                       name.Equals(FunctionNames.RepeatingLinearGradient, StringComparison.OrdinalIgnoreCase) ||
-                       name.Equals(FunctionNames.RepeatingRadialGradient, StringComparison.OrdinalIgnoreCase);
             }
         }
     }

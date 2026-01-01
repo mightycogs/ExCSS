@@ -124,8 +124,25 @@ namespace ExCSS
                    name.Equals(FunctionNames.RepeatingRadialGradient, StringComparison.OrdinalIgnoreCase);
         }
 
-        private static GradientFunctionValue ExtractGradientValue(FunctionToken function)
+        private static IStyleValue ExtractGradientValue(FunctionToken function)
         {
+            var tokens = new List<Token> { function };
+            IPropertyValue result = null;
+
+            if (function.Data.Equals(FunctionNames.LinearGradient, StringComparison.OrdinalIgnoreCase) ||
+                function.Data.Equals(FunctionNames.RepeatingLinearGradient, StringComparison.OrdinalIgnoreCase))
+            {
+                result = Converters.LinearGradientConverter.Convert(tokens);
+            }
+            else if (function.Data.Equals(FunctionNames.RadialGradient, StringComparison.OrdinalIgnoreCase) ||
+                     function.Data.Equals(FunctionNames.RepeatingRadialGradient, StringComparison.OrdinalIgnoreCase))
+            {
+                result = Converters.RadialGradientConverter.Convert(tokens);
+            }
+
+            if (result is ITypedPropertyValue typed && typed.GetValue() is IStyleValue sv)
+                return sv;
+
             var arguments = function.ArgumentTokens.ToText();
             return new GradientFunctionValue(function.Data, arguments);
         }
@@ -214,7 +231,7 @@ namespace ExCSS
                     if (function.Data.Equals(FunctionNames.Calc, StringComparison.OrdinalIgnoreCase))
                         return ExtractCalcValue(function);
                     if (IsGradientFunction(function.Data))
-                        return new GradientFunctionValue(function.Data, function.ArgumentTokens.ToText());
+                        return ExtractGradientValue(function);
                     return new FunctionValue(function.Data, function.ArgumentTokens.ToText());
                 }
                 if (token.Type == TokenType.Color)
@@ -260,7 +277,7 @@ namespace ExCSS
                     if (function.Data.Equals(FunctionNames.Calc, StringComparison.OrdinalIgnoreCase))
                         return ExtractCalcValue(function);
                     if (IsGradientFunction(function.Data))
-                        return new GradientFunctionValue(function.Data, function.ArgumentTokens.ToText());
+                        return ExtractGradientValue(function);
                 }
                 return null;
             }

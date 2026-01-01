@@ -1,4 +1,4 @@
-﻿// ReSharper disable UnusedMember.Global
+// ReSharper disable UnusedMember.Global
 
 namespace ExCSS
 {
@@ -37,5 +37,15 @@ namespace ExCSS
 
         public Length X { get; }
         public Length Y { get; }
+
+        public string CssText => $"{X.CssText} {Y.CssText}";
+
+        public override string ToString() => CssText;
+
+        public static bool operator ==(Point a, Point b) => a.X == b.X && a.Y == b.Y;
+        public static bool operator !=(Point a, Point b) => !(a == b);
+
+        public override bool Equals(object obj) => obj is Point p && this == p;
+        public override int GetHashCode() => X.GetHashCode() ^ Y.GetHashCode();
     }
 }

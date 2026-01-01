@@ -141,12 +141,12 @@ namespace ExCSS
         }).OrAuto();
 
         public static readonly IValueConverter LinearGradientConverter = Construct(() =>
-            new FunctionValueConverter(FunctionNames.LinearGradient, new LinearGradientConverter()).Or(
-                new FunctionValueConverter(FunctionNames.RepeatingLinearGradient, new LinearGradientConverter())));
+            new FunctionValueConverter(FunctionNames.LinearGradient, new LinearGradientConverter(false)).Or(
+                new FunctionValueConverter(FunctionNames.RepeatingLinearGradient, new LinearGradientConverter(true))));
 
         public static readonly IValueConverter RadialGradientConverter = Construct(() =>
-            new FunctionValueConverter(FunctionNames.RadialGradient, new RadialGradientConverter()).Or(
-                new FunctionValueConverter(FunctionNames.RepeatingRadialGradient, new RadialGradientConverter())));
+            new FunctionValueConverter(FunctionNames.RadialGradient, new RadialGradientConverter(false)).Or(
+                new FunctionValueConverter(FunctionNames.RepeatingRadialGradient, new RadialGradientConverter(true))));
 
         public static readonly IValueConverter RgbColorConverter = Construct(() =>
         {

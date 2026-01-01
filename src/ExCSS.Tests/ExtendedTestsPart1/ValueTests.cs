@@ -508,5 +508,94 @@ namespace ExCSS.Tests.ExtendedTestsPart1
             Assert.Null(Shadow.TryParse((IStyleValue)null));
             Assert.Null(Shadow.TryParse(new StyleValueList(new Length(5f, Length.Unit.Px))));
         }
+
+        [Fact]
+        public void LinearGradient_TypedValue_ReturnsLinearGradient()
+        {
+            var sheet = Parser.Parse(".box { background: linear-gradient(45deg, red 0%, blue 100%); }");
+            var rule = GetSingleStyleRule(sheet);
+            var bgProp = rule.Style.GetProperty("background");
+
+            Assert.NotNull(bgProp);
+            var typedValue = bgProp.TypedValue;
+            Assert.NotNull(typedValue);
+            Assert.IsType<LinearGradient>(typedValue);
+
+            var gradient = (LinearGradient)typedValue;
+            Assert.False(gradient.IsRepeating);
+            Assert.Equal(45f, gradient.Angle.Value);
+            Assert.Equal(Angle.Unit.Deg, gradient.Angle.Type);
+
+            var stops = gradient.Stops.ToArray();
+            Assert.Equal(2, stops.Length);
+            Assert.Equal(255, stops[0].Color.R);
+            Assert.Equal(0, stops[0].Color.G);
+            Assert.Equal(0f, stops[0].Location.Value);
+            Assert.Equal(0, stops[1].Color.R);
+            Assert.Equal(0, stops[1].Color.G);
+            Assert.Equal(255, stops[1].Color.B);
+            Assert.Equal(100f, stops[1].Location.Value);
+        }
+
+        [Fact]
+        public void RepeatingLinearGradient_TypedValue_ReturnsLinearGradientWithRepeating()
+        {
+            var sheet = Parser.Parse(".box { background: repeating-linear-gradient(90deg, #000, #fff 10px); }");
+            var rule = GetSingleStyleRule(sheet);
+            var bgProp = rule.Style.GetProperty("background");
+
+            Assert.NotNull(bgProp);
+            var typedValue = bgProp.TypedValue;
+            Assert.IsType<LinearGradient>(typedValue);
+
+            var gradient = (LinearGradient)typedValue;
+            Assert.True(gradient.IsRepeating);
+            Assert.Equal(90f, gradient.Angle.Value);
+        }
+
+        [Fact]
+        public void RadialGradient_TypedValue_ReturnsRadialGradient()
+        {
+            var sheet = Parser.Parse(".box { background: radial-gradient(red, blue); }");
+            var rule = GetSingleStyleRule(sheet);
+            var bgProp = rule.Style.GetProperty("background");
+
+            Assert.NotNull(bgProp);
+            var typedValue = bgProp.TypedValue;
+            Assert.NotNull(typedValue);
+            Assert.IsType<RadialGradient>(typedValue);
+
+            var gradient = (RadialGradient)typedValue;
+            Assert.False(gradient.IsRepeating);
+
+            var stops = gradient.Stops.ToArray();
+            Assert.Equal(2, stops.Length);
+        }
+
+        [Fact]
+        public void LinearGradient_CssText_RoundTrip()
+        {
+            var sheet = Parser.Parse(".box { background: linear-gradient(180deg, red 0%, blue 100%); }");
+            var rule = GetSingleStyleRule(sheet);
+            var bgProp = rule.Style.GetProperty("background");
+            var gradient = bgProp.TypedValue as LinearGradient;
+
+            Assert.NotNull(gradient);
+            var cssText = gradient.CssText;
+            Assert.Contains("linear-gradient(", cssText);
+            Assert.Contains("rgb(255, 0, 0)", cssText);
+            Assert.Contains("rgb(0, 0, 255)", cssText);
+        }
+
+        [Fact]
+        public void GradientStop_ImplementsIStyleValue()
+        {
+            var stop = new GradientStop(Color.Red, new Length(50f, Length.Unit.Percent));
+
+            Assert.IsAssignableFrom<IStyleValue>(stop);
+            Assert.Equal(StyleValueType.Gradient, stop.Type);
+            Assert.Contains("rgb(255, 0, 0)", stop.CssText);
+            Assert.Contains("50%", stop.CssText);
+        }
     }
 }
