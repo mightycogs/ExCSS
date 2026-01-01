@@ -174,6 +174,10 @@ Supported vendor properties: `appearance`, `-webkit-appearance`, `-webkit-line-c
 - **AOT/Trimming**: Compatible with .NET Native AOT and IL trimming (Unity IL2CPP)
 - **Resilience**: Graceful recovery from malformed CSS without crashing
 
+## What's New
+- Background shorthand expansion now handles multi-layer images, 2D repeats, origin/clip pairing, and position/size with slash.
+- Added typed `TryGetValue<T>()` coverage for common value types (color, length, keyword).
+
 ## Compatibility
 - .NET 8.0, 7.0, 6.0, Core 3.1, Framework 4.8
 - .NET Standard 2.0, 2.1
