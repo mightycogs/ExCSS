@@ -143,8 +143,7 @@ namespace ExCSS
             if (result is ITypedPropertyValue typed && typed.GetValue() is IStyleValue sv)
                 return sv;
 
-            var arguments = function.ArgumentTokens.ToText();
-            return new GradientFunctionValue(function.Data, arguments);
+            return null;
         }
 
         private sealed class TypedAnyValue : IPropertyValue, ITypedPropertyValue
