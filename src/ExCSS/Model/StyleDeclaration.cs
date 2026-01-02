@@ -1322,6 +1322,37 @@ namespace ExCSS
             set => SetPropertyValue(PropertyNames.WordWrap, value);
         }
 
+        // Typed convenience accessors (layout, spacing, typography)
+        public Length? WidthValue => GetTyped<Length>(PropertyNames.Width);
+        public Length? HeightValue => GetTyped<Length>(PropertyNames.Height);
+        public Length? MinWidthValue => GetTyped<Length>(PropertyNames.MinWidth);
+        public Length? MaxWidthValue => GetTyped<Length>(PropertyNames.MaxWidth);
+        public Length? MinHeightValue => GetTyped<Length>(PropertyNames.MinHeight);
+        public Length? MaxHeightValue => GetTyped<Length>(PropertyNames.MaxHeight);
+
+        public Length? MarginTopValue => GetTyped<Length>(PropertyNames.MarginTop);
+        public Length? MarginRightValue => GetTyped<Length>(PropertyNames.MarginRight);
+        public Length? MarginBottomValue => GetTyped<Length>(PropertyNames.MarginBottom);
+        public Length? MarginLeftValue => GetTyped<Length>(PropertyNames.MarginLeft);
+
+        public Length? PaddingTopValue => GetTyped<Length>(PropertyNames.PaddingTop);
+        public Length? PaddingRightValue => GetTyped<Length>(PropertyNames.PaddingRight);
+        public Length? PaddingBottomValue => GetTyped<Length>(PropertyNames.PaddingBottom);
+        public Length? PaddingLeftValue => GetTyped<Length>(PropertyNames.PaddingLeft);
+
+        public Length? FontSizeValue => GetTyped<Length>(PropertyNames.FontSize);
+        public Number? LineHeightValue => GetTyped<Number>(PropertyNames.LineHeight);
+
+        private T? GetTyped<T>(string propertyName) where T : struct, IStyleValue
+        {
+            var property = GetProperty(propertyName);
+            if (property?.TryGetValue<T>(out var value) == true)
+            {
+                return value;
+            }
+            return null;
+        }
+
         public string Padding
         {
             get => GetPropertyValue(PropertyNames.Padding);
