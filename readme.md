@@ -93,7 +93,7 @@ var opacity = rule.Style.GetProperty("opacity").TypedValue as Number;
 Console.WriteLine(opacity.Value); // 0.8
 ```
 
-Available typed values: `Color`, `Length`, `Percent`, `Number`, `Time`, `CalcValue`, `VarValue`, `Gradient`, `Shadow`, and more.
+Available typed values: `Color`, `Length`, `Percent`, `Number`, `Time`, `Angle`, `AspectRatio`, `CalcValue`, `VarValue`, `Gradient`, `Shadow`, and more.
 
 Calc expression nodes: `CalcBinaryExpression` (+, -, *, /), `CalcLiteralExpression` (values), `CalcVarExpression` (var() refs), `CalcGroupExpression` (parentheses).
 
@@ -135,10 +135,10 @@ var stylesheet = parser.Parse(@"
 }");
 var rule = stylesheet.StyleRules.First() as StyleRule;
 
-// Aspect Ratio (returns StyleValueList or Number)
-var ratio = rule.Style.GetProperty("aspect-ratio").TypedValue as StyleValueList;
-var w = (ratio[0] as Number).Value; // 16
-var h = (ratio[1] as Number).Value; // 9
+// Aspect Ratio (returns typed AspectRatio)
+var ratio = rule.Style.GetProperty("aspect-ratio").TypedValue as AspectRatio;
+Console.WriteLine($"{ratio.Width} / {ratio.Height}"); // 16 / 9
+Console.WriteLine($"Ratio: {ratio.Value}");           // 1.777...
 
 // Backdrop Filter (returns list of FunctionValue)
 var filters = rule.Style.GetProperty("backdrop-filter").TypedValue as StyleValueList;
