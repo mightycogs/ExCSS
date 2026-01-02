@@ -46,6 +46,9 @@ namespace ExCSS
             Register(new LogicalPairExpander(PropertyNames.PaddingBlock, PropertyNames.PaddingBlockStart, PropertyNames.PaddingBlockEnd));
             Register(new ColumnRuleExpander());
             Register(new ColumnsExpander());
+            Register(new AnimationExpander());
+            Register(new TransitionExpander());
+            Register(new FontExpander());
         }
 
         /// <summary>
