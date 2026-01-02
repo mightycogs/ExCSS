@@ -169,20 +169,22 @@ Supported vendor properties: `appearance`, `-webkit-appearance`, `-webkit-line-c
 ## Shorthand Expansion
 Expand CSS shorthand properties to their longhands via `ShorthandRegistry`:
 ```cs
+// Parse: .box { margin: 10px 20px; }
 var prop = rule.Style.GetProperty("margin");
 var expanded = ShorthandRegistry.Expand("margin", prop.TypedValue);
-// { "margin-top": 10px, "margin-right": 20px, "margin-bottom": 10px, "margin-left": 20px }
+// Returns: margin-top=10px, margin-right=20px, margin-bottom=10px, margin-left=20px
 ```
 
 Supported shorthands: `margin`, `padding`, `inset`, `border`, `border-radius`, `background`, `flex`, `flex-flow`, `gap`, `animation`, `transition`, `font`, `text-decoration`, `outline`, `list-style`, `columns`, `column-rule`, `place-content`, `place-items`, `place-self`, `border-top/right/bottom/left`, `border-inline`, `border-block`, `margin-inline`, `margin-block`, `padding-inline`, `padding-block`.
 
 ## Supported Features
 - **Shorthand Expansion**: 25+ CSS shorthands → longhands (background 8-way, animation 8-way, font 7-way, etc.)
-- **Values**: Strongly-typed access to colors, lengths, calc(), var(), gradients, shadows
-- **Selectors**: CSS Level 3 selectors, `:not()`, `:has()`, `:matches()`, `:nth-child()`, vendor pseudo-elements
+- **Typed Values**: Colors, lengths, calc(), var(), gradients, shadows as strongly-typed objects
+- **CSS Custom Properties**: Full `var()` support with fallbacks
+- **Vendor Prefixes**: `-webkit-*`, `-moz-*` properties parsed correctly
+- **Selectors**: CSS Level 3 selectors, `:not()`, `:has()`, `:matches()`, `:nth-child()`
 - **At-rules**: `@media`, `@keyframes`, `@font-face`, `@supports`, `@container`
 - **AOT/Trimming**: Compatible with .NET Native AOT and IL trimming (Unity IL2CPP)
-- **Resilience**: Graceful recovery from malformed CSS without crashing
 
 ## Compatibility
 - .NET 8.0, 7.0, 6.0, Core 3.1, Framework 4.8
