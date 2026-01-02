@@ -283,6 +283,7 @@
         public static readonly string WebkitBackdropFilter = "-webkit-backdrop-filter";
         public static readonly string MozAppearance = "-moz-appearance";
         public static readonly string Appearance = "appearance";
+        public static readonly string AspectRatio = "aspect-ratio";
         public static readonly string WebkitAppearance = "-webkit-appearance";
         public static readonly string WebkitLineClamp = "-webkit-line-clamp";
         public static readonly string WebkitBoxOrient = "-webkit-box-orient";

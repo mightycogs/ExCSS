@@ -451,6 +451,34 @@ namespace ExCSS
             Keywords.RepeatX).Or(Keywords.RepeatY).Or(
             WithOrder(BackgroundRepeatConverter.Required(), BackgroundRepeatConverter.Required()));
 
+        public static readonly IValueConverter AspectRatioValueConverter =
+            TypedNumberConverter.Required().Or(
+                WithOrder(
+                    TypedNumberConverter.Required(),
+                    TypedNumberConverter.StartsWithDelimiter().Required()
+                ));
+
+        public static readonly IValueConverter FilterConverter = Construct(() =>
+        {
+            var numberOrPercent = TypedNumberConverter.Or(PercentConverter).Required();
+            var length = LengthConverter.Required();
+            var angle = AngleConverter.Required();
+            var shadow = ShadowConverter;
+
+            return new FunctionValueConverter(FunctionNames.Blur, WithArgs(length)).Or(
+                   new FunctionValueConverter(FunctionNames.Brightness, WithArgs(numberOrPercent))).Or(
+                   new FunctionValueConverter(FunctionNames.Contrast, WithArgs(numberOrPercent))).Or(
+                   new FunctionValueConverter(FunctionNames.DropShadow, WithArgs(shadow))).Or(
+                   new FunctionValueConverter(FunctionNames.Grayscale, WithArgs(numberOrPercent))).Or(
+                   new FunctionValueConverter(FunctionNames.HueRotate, WithArgs(angle))).Or(
+                   new FunctionValueConverter(FunctionNames.Invert, WithArgs(numberOrPercent))).Or(
+                   new FunctionValueConverter(FunctionNames.Opacity, WithArgs(numberOrPercent))).Or(
+                   new FunctionValueConverter(FunctionNames.Saturate, WithArgs(numberOrPercent))).Or(
+                   new FunctionValueConverter(FunctionNames.Sepia, WithArgs(numberOrPercent))).Or(
+                   UrlConverter
+            );
+        }).FromList().OrNone();
+
         #endregion
 
         #region Toggles

@@ -47,5 +47,15 @@
         public static readonly string Gray = "gray";
         public static readonly string Hwb = "hwb";
         public static readonly string Var = "var";
+        public static readonly string Blur = "blur";
+        public static readonly string Brightness = "brightness";
+        public static readonly string Contrast = "contrast";
+        public static readonly string DropShadow = "drop-shadow";
+        public static readonly string Grayscale = "grayscale";
+        public static readonly string HueRotate = "hue-rotate";
+        public static readonly string Invert = "invert";
+        public static readonly string Opacity = "opacity";
+        public static readonly string Saturate = "saturate";
+        public static readonly string Sepia = "sepia";
     }
 }

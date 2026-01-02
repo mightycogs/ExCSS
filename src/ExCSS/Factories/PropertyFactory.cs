@@ -41,6 +41,8 @@ namespace ExCSS
             AddLonghand(PropertyNames.AnimationPlayState, () => new AnimationPlayStateProperty());
             AddLonghand(PropertyNames.AnimationTimingFunction, () => new AnimationTimingFunctionProperty());
 
+            AddLonghand(PropertyNames.AspectRatio, () => new AspectRatioProperty());
+
             AddShorthand(PropertyNames.Background, () => new BackgroundProperty(),
                 PropertyNames.BackgroundAttachment,
                 PropertyNames.BackgroundClip,

@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace ExCSS
@@ -52,7 +52,7 @@ namespace ExCSS
             return list;
         }
 
-        private sealed class StartValue : IPropertyValue
+        private sealed class StartValue : IPropertyValue, ITypedPropertyValue
         {
             private readonly string _start;
             private readonly IPropertyValue _value;
@@ -71,6 +71,15 @@ namespace ExCSS
             public TokenValue ExtractFor(string name)
             {
                 return _value.ExtractFor(name);
+            }
+
+            public object GetValue()
+            {
+                if (_value is ITypedPropertyValue typed)
+                {
+                    return typed.GetValue();
+                }
+                return null;
             }
         }
     }
