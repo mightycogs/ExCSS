@@ -29,6 +29,23 @@ namespace ExCSS
             Register(new PlaceExpander(PropertyNames.PlaceContent, PropertyNames.AlignContent, PropertyNames.JustifyContent));
             Register(new PlaceExpander(PropertyNames.PlaceItems, PropertyNames.AlignItems, PropertyNames.JustifyItems));
             Register(new PlaceExpander(PropertyNames.PlaceSelf, PropertyNames.AlignSelf, PropertyNames.JustifySelf));
+            Register(new TextDecorationExpander());
+            Register(new BorderSideExpander(PropertyNames.BorderTop, PropertyNames.BorderTopWidth, PropertyNames.BorderTopStyle, PropertyNames.BorderTopColor));
+            Register(new BorderSideExpander(PropertyNames.BorderRight, PropertyNames.BorderRightWidth, PropertyNames.BorderRightStyle, PropertyNames.BorderRightColor));
+            Register(new BorderSideExpander(PropertyNames.BorderBottom, PropertyNames.BorderBottomWidth, PropertyNames.BorderBottomStyle, PropertyNames.BorderBottomColor));
+            Register(new BorderSideExpander(PropertyNames.BorderLeft, PropertyNames.BorderLeftWidth, PropertyNames.BorderLeftStyle, PropertyNames.BorderLeftColor));
+            Register(new BorderLogicalExpander(PropertyNames.BorderInline,
+                PropertyNames.BorderInlineStartWidth, PropertyNames.BorderInlineStartStyle, PropertyNames.BorderInlineStartColor,
+                PropertyNames.BorderInlineEndWidth, PropertyNames.BorderInlineEndStyle, PropertyNames.BorderInlineEndColor));
+            Register(new BorderLogicalExpander(PropertyNames.BorderBlock,
+                PropertyNames.BorderBlockStartWidth, PropertyNames.BorderBlockStartStyle, PropertyNames.BorderBlockStartColor,
+                PropertyNames.BorderBlockEndWidth, PropertyNames.BorderBlockEndStyle, PropertyNames.BorderBlockEndColor));
+            Register(new LogicalPairExpander(PropertyNames.MarginInline, PropertyNames.MarginInlineStart, PropertyNames.MarginInlineEnd));
+            Register(new LogicalPairExpander(PropertyNames.MarginBlock, PropertyNames.MarginBlockStart, PropertyNames.MarginBlockEnd));
+            Register(new LogicalPairExpander(PropertyNames.PaddingInline, PropertyNames.PaddingInlineStart, PropertyNames.PaddingInlineEnd));
+            Register(new LogicalPairExpander(PropertyNames.PaddingBlock, PropertyNames.PaddingBlockStart, PropertyNames.PaddingBlockEnd));
+            Register(new ColumnRuleExpander());
+            Register(new ColumnsExpander());
         }
 
         /// <summary>
