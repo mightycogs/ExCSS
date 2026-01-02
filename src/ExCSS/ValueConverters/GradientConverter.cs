@@ -155,9 +155,28 @@ namespace ExCSS
             {
                 var val = typed.GetValue();
                 if (val is Angle a)
+                {
                     angle = a;
+                }
+                else if (val is object[] parts && parts.Length >= 2 && parts[0] is double h && parts[1] is double v)
+                {
+                    angle = DirectionToAngle(h, v);
+                }
             }
             return new LinearGradient(angle, stops, IsRepeating);
+        }
+
+        private static Angle DirectionToAngle(double horizontal, double vertical)
+        {
+            if (horizontal == 1.0 && vertical == 0.0) return new Angle(90f, Angle.Unit.Deg);
+            if (horizontal == -1.0 && vertical == 0.0) return new Angle(270f, Angle.Unit.Deg);
+            if (horizontal == 0.0 && vertical == 1.0) return new Angle(0f, Angle.Unit.Deg);
+            if (horizontal == 0.0 && vertical == -1.0) return new Angle(180f, Angle.Unit.Deg);
+            if (horizontal == 1.0 && vertical == 1.0) return new Angle(45f, Angle.Unit.Deg);
+            if (horizontal == -1.0 && vertical == 1.0) return new Angle(315f, Angle.Unit.Deg);
+            if (horizontal == 1.0 && vertical == -1.0) return new Angle(135f, Angle.Unit.Deg);
+            if (horizontal == -1.0 && vertical == -1.0) return new Angle(225f, Angle.Unit.Deg);
+            return Angle.Half;
         }
     }
 

@@ -451,12 +451,7 @@ namespace ExCSS
             Keywords.RepeatX).Or(Keywords.RepeatY).Or(
             WithOrder(BackgroundRepeatConverter.Required(), BackgroundRepeatConverter.Required()));
 
-        public static readonly IValueConverter AspectRatioValueConverter =
-            TypedNumberConverter.Required().Or(
-                WithOrder(
-                    TypedNumberConverter.Required(),
-                    TypedNumberConverter.StartsWithDelimiter().Required()
-                ));
+        public static readonly IValueConverter AspectRatioValueConverter = AspectRatioConverter.Instance;
 
         public static readonly IValueConverter FilterConverter = Construct(() =>
         {

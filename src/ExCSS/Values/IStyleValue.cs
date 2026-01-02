@@ -34,6 +34,7 @@ namespace ExCSS
         Shadow,
         Gradient,
         Transform,
+        AspectRatio,
         Unknown
     }
 
