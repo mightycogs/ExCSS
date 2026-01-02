@@ -125,6 +125,27 @@ if (prop.TypedValue is RadialGradient rg)
 }
 ```
 
+## Modern Layout & Effects
+Support for modern layout and visual effects:
+```cs
+var stylesheet = parser.Parse(@"
+.card {
+    aspect-ratio: 16 / 9;
+    backdrop-filter: blur(10px) saturate(180%);
+}");
+var rule = stylesheet.StyleRules.First() as StyleRule;
+
+// Aspect Ratio (returns StyleValueList or Number)
+var ratio = rule.Style.GetProperty("aspect-ratio").TypedValue as StyleValueList;
+var w = (ratio[0] as Number).Value; // 16
+var h = (ratio[1] as Number).Value; // 9
+
+// Backdrop Filter (returns list of FunctionValue)
+var filters = rule.Style.GetProperty("backdrop-filter").TypedValue as StyleValueList;
+var blur = filters[0] as FunctionValue;      // Name: blur, Args: 10px
+var saturate = filters[1] as FunctionValue; // Name: saturate, Args: 180%
+```
+
 ## Shadow Parsing Helper
 Convert box-shadow values to typed `Shadow` objects:
 ```cs
@@ -179,7 +200,7 @@ Supported shorthands: `margin`, `padding`, `inset`, `border`, `border-radius`, `
 
 ## Supported Features
 - **Shorthand Expansion**: 25+ CSS shorthands → longhands (background 8-way, animation 8-way, font 7-way, etc.)
-- **Typed Values**: Colors, lengths, calc(), var(), gradients, shadows as strongly-typed objects
+- **Typed Values**: Colors, lengths, calc(), var(), gradients, shadows, aspect-ratio, filter functions as strongly-typed objects
 - **CSS Custom Properties**: Full `var()` support with fallbacks
 - **Vendor Prefixes**: `-webkit-*`, `-moz-*` properties parsed correctly
 - **Selectors**: CSS Level 3 selectors, `:not()`, `:has()`, `:matches()`, `:nth-child()`
