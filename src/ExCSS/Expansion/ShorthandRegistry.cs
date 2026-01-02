@@ -24,6 +24,11 @@ namespace ExCSS
             Register(new FlexExpander());
             Register(new FlexFlowExpander());
             Register(new GapExpander());
+            Register(new ListStyleExpander());
+            Register(new OutlineExpander());
+            Register(new PlaceExpander(PropertyNames.PlaceContent, PropertyNames.AlignContent, PropertyNames.JustifyContent));
+            Register(new PlaceExpander(PropertyNames.PlaceItems, PropertyNames.AlignItems, PropertyNames.JustifyItems));
+            Register(new PlaceExpander(PropertyNames.PlaceSelf, PropertyNames.AlignSelf, PropertyNames.JustifySelf));
         }
 
         /// <summary>
