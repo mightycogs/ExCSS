@@ -219,6 +219,31 @@ var bgRepeat = expanded["background-repeat"];         // KeywordValue "no-repeat
 
 Supported shorthands: `margin`, `padding`, `inset`, `border`, `border-radius`, `background`, `flex`, `flex-flow`, `gap`, `animation`, `transition`, `font`, `text-decoration`, `outline`, `list-style`, `columns`, `column-rule`, `place-content`, `place-items`, `place-self`, `border-top/right/bottom/left`, `border-inline`, `border-block`, `margin-inline`, `margin-block`, `padding-inline`, `padding-block`.
 
+### Shorthand Typed Values
+
+Shorthands are automatically expanded to longhands during parsing. Typed values can be extracted from expanded longhands:
+
+| Shorthand | Longhands | Typed Values |
+|-----------|-----------|--------------|
+| `background` | `background-color`, `background-image`, ... | `Color` (rgba, rgb, hex, named, hsla) |
+| `border` | `border-*-width`, `border-*-style`, `border-*-color` | `Length`, keyword, `Color` |
+| `margin` | `margin-top/right/bottom/left` | `Length`, `Percent`, auto keyword |
+| `padding` | `padding-top/right/bottom/left` | `Length`, `Percent` |
+| `flex` | `flex-grow`, `flex-shrink`, `flex-basis` | `Number` (via CssText), `Length`, `Percent` |
+| `gap` | `row-gap`, `column-gap` | `Length`, `Percent` |
+
+**Note**: Shorthand properties are automatically expanded to longhands during parsing. For example, `background: rgba(255, 0, 0, 0.5)` expands to 8 properties including `background-color` with a typed `Color`.
+
+```cs
+// Shorthand is expanded during parsing - access longhands directly
+var style = parser.Parse(".box { background: rgba(255, 0, 0, 0.5); }").StyleRules.First().Style;
+
+// Get typed Color from expanded longhand
+var bgColorProp = style.Declarations.First(d => d.Name == "background-color");
+var color = bgColorProp.TypedValue as Color;
+Console.WriteLine($"R:{color.R} A:{color.Alpha}"); // R:255 A:0.5
+```
+
 ## Supported Features
 - **Shorthand Expansion**: 25+ CSS shorthands → longhands (background 8-way, animation 8-way, font 7-way, etc.)
 - **Typed Values**: Colors, lengths, calc(), var(), gradients, shadows, aspect-ratio, filter functions as strongly-typed objects
