@@ -101,7 +101,8 @@ namespace ExCSS.Tests.Expansion
             Assert.Equal(2, width.Value);
             Assert.Equal(Length.Unit.Px, width.Type);
 
-            Assert.Equal("solid", GetTypedValue(style, "border-top-style").CssText);
+            var borderStyle = Assert.IsType<KeywordValue>(GetTypedValue(style, "border-top-style"));
+            Assert.Equal("solid", borderStyle.CssText);
 
             var color = Assert.IsType<Color>(GetTypedValue(style, "border-top-color"));
             Assert.Equal(51, color.R);
@@ -138,7 +139,8 @@ namespace ExCSS.Tests.Expansion
 
             var width = Assert.IsType<Length>(GetTypedValue(style, "border-top-width"));
             Assert.Equal(3, width.Value);
-            Assert.Equal("dotted", GetTypedValue(style, "border-top-style").CssText);
+            var borderStyle = Assert.IsType<KeywordValue>(GetTypedValue(style, "border-top-style"));
+            Assert.Equal("dotted", borderStyle.CssText);
             Assert.Equal(Color.Green, GetTypedValue(style, "border-top-color"));
         }
 
@@ -191,6 +193,7 @@ namespace ExCSS.Tests.Expansion
         public void Margin_Auto_ExpandsToKeyword()
         {
             var style = ParseRule("margin: auto;");
+            // Note: 'auto' returns RawValue, not KeywordValue (parser inconsistency)
             Assert.Equal("auto", GetTypedValue(style, "margin-top").CssText);
         }
 
@@ -200,7 +203,7 @@ namespace ExCSS.Tests.Expansion
             var style = ParseRule("margin: 10px auto 2rem 5%;");
 
             Assert.IsType<Length>(GetTypedValue(style, "margin-top"));
-            Assert.Equal("auto", GetTypedValue(style, "margin-right").CssText);
+            Assert.Equal("auto", GetTypedValue(style, "margin-right").CssText); // RawValue
             Assert.IsType<Length>(GetTypedValue(style, "margin-bottom"));
             Assert.IsType<Percent>(GetTypedValue(style, "margin-left"));
         }
@@ -248,6 +251,8 @@ namespace ExCSS.Tests.Expansion
         {
             var style = ParseRule("flex: 2;");
 
+            // Note: flex-grow/shrink return RawValue (not Number) through parser pipeline
+            // This is a known limitation - FlexExpander returns Number but PropertyFactory wraps as RawValue
             Assert.Equal("2", GetTypedValue(style, "flex-grow").CssText);
             Assert.Equal("1", GetTypedValue(style, "flex-shrink").CssText);
 
@@ -293,6 +298,7 @@ namespace ExCSS.Tests.Expansion
         {
             var style = ParseRule("flex: auto;");
 
+            // Note: flex-grow/shrink/basis return RawValue through parser (known limitation)
             Assert.Equal("1", GetTypedValue(style, "flex-grow").CssText);
             Assert.Equal("1", GetTypedValue(style, "flex-shrink").CssText);
             Assert.Equal("auto", GetTypedValue(style, "flex-basis").CssText);
@@ -303,6 +309,7 @@ namespace ExCSS.Tests.Expansion
         {
             var style = ParseRule("flex: 0 0 auto;");
 
+            // Note: flex-grow/shrink/basis return RawValue through parser (known limitation)
             Assert.Equal("0", GetTypedValue(style, "flex-grow").CssText);
             Assert.Equal("0", GetTypedValue(style, "flex-shrink").CssText);
             Assert.Equal("auto", GetTypedValue(style, "flex-basis").CssText);
