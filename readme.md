@@ -93,7 +93,7 @@ var opacity = rule.Style.GetProperty("opacity").TypedValue as Number;
 Console.WriteLine(opacity.Value); // 0.8
 ```
 
-Available typed values: `Color`, `Length`, `Percent`, `Number`, `Time`, `Angle`, `AspectRatio`, `CalcValue`, `VarValue`, `Gradient`, `Shadow`, and more.
+Available typed values: `Color`, `Length`, `Percent`, `Number`, `Time`, `Angle`, `AspectRatio`, `CalcValue`, `VarValue`, `Gradient`, `Shadow`, `FunctionValue` (for filters), and more.
 
 Calc expression nodes: `CalcBinaryExpression` (+, -, *, /), `CalcLiteralExpression` (values), `CalcVarExpression` (var() refs), `CalcGroupExpression` (parentheses).
 
@@ -140,10 +140,17 @@ var ratio = rule.Style.GetProperty("aspect-ratio").TypedValue as AspectRatio;
 Console.WriteLine($"{ratio.Width} / {ratio.Height}"); // 16 / 9
 Console.WriteLine($"Ratio: {ratio.Value}");           // 1.777...
 
-// Backdrop Filter (returns list of FunctionValue)
-var filters = rule.Style.GetProperty("backdrop-filter").TypedValue as StyleValueList;
-var blur = filters[0] as FunctionValue;      // Name: blur, Args: 10px
-var saturate = filters[1] as FunctionValue; // Name: saturate, Args: 180%
+// Backdrop Filter (single function or list)
+var filterProp = rule.Style.GetProperty("backdrop-filter");
+if (filterProp.TypedValue is FunctionValue single)
+{
+    Console.WriteLine($"{single.Name}({single.Arguments})"); // blur(10px)
+}
+else if (filterProp.TypedValue is StyleValueList list)
+{
+    foreach (var fn in list.OfType<FunctionValue>())
+        Console.WriteLine($"{fn.Name}({fn.Arguments})"); // blur(10px), saturate(180%)
+}
 ```
 
 ## Shadow Parsing Helper
@@ -194,6 +201,20 @@ Expand CSS shorthand properties to their longhands via `ShorthandRegistry`:
 var prop = rule.Style.GetProperty("margin");
 var expanded = ShorthandRegistry.Expand("margin", prop.TypedValue);
 // Returns: margin-top=10px, margin-right=20px, margin-bottom=10px, margin-left=20px
+```
+
+Background shorthand expands to 8 longhands including typed Color:
+```cs
+var stylesheet = parser.Parse(".box { background: rgba(30, 30, 30, 0.95) url(bg.png) no-repeat; }");
+var rule = stylesheet.StyleRules.First() as StyleRule;
+var bgProp = rule.Style.GetProperty("background");
+
+var expanded = ShorthandRegistry.Expand("background", bgProp.TypedValue);
+var bgColor = expanded["background-color"] as Color;  // typed Color
+Console.WriteLine($"RGBA: {bgColor.R}, {bgColor.G}, {bgColor.B}, {bgColor.A}"); // 30, 30, 30, 242
+
+var bgImage = expanded["background-image"];           // UrlValue
+var bgRepeat = expanded["background-repeat"];         // KeywordValue "no-repeat"
 ```
 
 Supported shorthands: `margin`, `padding`, `inset`, `border`, `border-radius`, `background`, `flex`, `flex-flow`, `gap`, `animation`, `transition`, `font`, `text-decoration`, `outline`, `list-style`, `columns`, `column-rule`, `place-content`, `place-items`, `place-self`, `border-top/right/bottom/left`, `border-inline`, `border-block`, `margin-inline`, `margin-block`, `padding-inline`, `padding-block`.
