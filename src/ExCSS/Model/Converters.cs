@@ -426,10 +426,7 @@ namespace ExCSS
             IntegerConverter.Required(),
             IntegerConverter.StartsWithDelimiter().Required());
 
-        public static readonly IValueConverter ShadowConverter = WithAny(
-            Assign(Keywords.Inset, true).Option(false),
-            LengthConverter.Many(2, 4).Required(),
-            ColorConverter.WithCurrentColor().Option(Color.Black));
+        public static readonly IValueConverter ShadowConverter = ExCSS.ShadowConverter.Instance;
 
         public static readonly IValueConverter MultipleShadowConverter = ShadowConverter.FromList().OrNone();
         public static readonly IValueConverter ImageSourceConverter = UrlConverter.Or(GradientConverter);
