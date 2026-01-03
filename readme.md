@@ -195,54 +195,32 @@ var lineClamp = rule.Style.GetPropertyValue("-webkit-line-clamp"); // 3
 Supported vendor properties: `appearance`, `-webkit-appearance`, `-webkit-line-clamp`, `-webkit-box-orient`, `-webkit-font-smoothing`, `-moz-osx-font-smoothing`, `user-select`, `overflow-x`, `overflow-y`, `pointer-events`.
 
 ## Shorthand Expansion
-Expand CSS shorthand properties to their longhands via `ShorthandRegistry`:
+Shorthand properties are automatically expanded to longhands during parsing. Access typed values directly from expanded properties:
+
 ```cs
-// Parse: .box { margin: 10px 20px; }
-var prop = rule.Style.GetProperty("margin");
-var expanded = ShorthandRegistry.Expand("margin", prop.TypedValue);
-// Returns: margin-top=10px, margin-right=20px, margin-bottom=10px, margin-left=20px
+var style = parser.Parse(".box { margin: 10px auto; flex: 2 1 100px; }").StyleRules.First().Style;
+
+// Margin expands to 4 longhands
+var top = style.Declarations.First(d => d.Name == "margin-top").TypedValue as Length;
+var right = style.Declarations.First(d => d.Name == "margin-right").TypedValue as KeywordValue; // auto
+
+// Flex expands to 3 longhands
+var grow = style.Declarations.First(d => d.Name == "flex-grow").TypedValue as Number;
+var basis = style.Declarations.First(d => d.Name == "flex-basis").TypedValue as Length;
+Console.WriteLine($"grow: {grow.Value}, basis: {basis.Value}px"); // grow: 2, basis: 100px
 ```
-
-Background shorthand expands to 8 longhands including typed Color:
-```cs
-var stylesheet = parser.Parse(".box { background: rgba(30, 30, 30, 0.95) url(bg.png) no-repeat; }");
-var rule = stylesheet.StyleRules.First() as StyleRule;
-var bgProp = rule.Style.GetProperty("background");
-
-var expanded = ShorthandRegistry.Expand("background", bgProp.TypedValue);
-var bgColor = expanded["background-color"] as Color;  // typed Color
-Console.WriteLine($"RGBA: {bgColor.R}, {bgColor.G}, {bgColor.B}, {bgColor.A}"); // 30, 30, 30, 242
-
-var bgImage = expanded["background-image"];           // UrlValue
-var bgRepeat = expanded["background-repeat"];         // KeywordValue "no-repeat"
-```
-
-Supported shorthands: `margin`, `padding`, `inset`, `border`, `border-radius`, `background`, `flex`, `flex-flow`, `gap`, `animation`, `transition`, `font`, `text-decoration`, `outline`, `list-style`, `columns`, `column-rule`, `place-content`, `place-items`, `place-self`, `border-top/right/bottom/left`, `border-inline`, `border-block`, `margin-inline`, `margin-block`, `padding-inline`, `padding-block`.
-
-### Shorthand Typed Values
-
-Shorthands are automatically expanded to longhands during parsing. Typed values can be extracted from expanded longhands:
 
 | Shorthand | Longhands | Typed Values |
 |-----------|-----------|--------------|
-| `background` | `background-color`, `background-image`, ... | `Color` (rgba, rgb, hex, named, hsla) |
-| `border` | `border-*-width`, `border-*-style`, `border-*-color` | `Length`, keyword, `Color` |
-| `margin` | `margin-top/right/bottom/left` | `Length`, `Percent`, auto keyword |
-| `padding` | `padding-top/right/bottom/left` | `Length`, `Percent` |
-| `flex` | `flex-grow`, `flex-shrink`, `flex-basis` | `Number` (via CssText), `Length`, `Percent` |
+| `margin`, `padding` | `*-top/right/bottom/left` | `Length`, `Percent`, `KeywordValue` (auto) |
+| `border` | `border-*-width/style/color` | `Length`, `KeywordValue`, `Color` |
+| `flex` | `flex-grow`, `flex-shrink`, `flex-basis` | `Number`, `Length`, `Percent` |
 | `gap` | `row-gap`, `column-gap` | `Length`, `Percent` |
+| `background` | 8 longhands including `background-color` | `Color`, `UrlValue`, `KeywordValue` |
 
-**Note**: Shorthand properties are automatically expanded to longhands during parsing. For example, `background: rgba(255, 0, 0, 0.5)` expands to 8 properties including `background-color` with a typed `Color`.
+For manual expansion use `ShorthandRegistry.Expand(name, value)`.
 
-```cs
-// Shorthand is expanded during parsing - access longhands directly
-var style = parser.Parse(".box { background: rgba(255, 0, 0, 0.5); }").StyleRules.First().Style;
-
-// Get typed Color from expanded longhand
-var bgColorProp = style.Declarations.First(d => d.Name == "background-color");
-var color = bgColorProp.TypedValue as Color;
-Console.WriteLine($"R:{color.R} A:{color.Alpha}"); // R:255 A:0.5
-```
+Supported shorthands: `margin`, `padding`, `inset`, `border`, `border-radius`, `background`, `flex`, `flex-flow`, `gap`, `animation`, `transition`, `font`, `text-decoration`, `outline`, `list-style`, `columns`, `column-rule`, `place-content`, `place-items`, `place-self`, `border-top/right/bottom/left`, `border-inline`, `border-block`, `margin-inline`, `margin-block`, `padding-inline`, `padding-block`.
 
 ## Supported Features
 - **Shorthand Expansion**: 25+ CSS shorthands → longhands (background 8-way, animation 8-way, font 7-way, etc.)
