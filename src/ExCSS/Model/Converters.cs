@@ -352,9 +352,9 @@ namespace ExCSS
                                                                       .OrGlobalValue()
                                                                       .OrDefault(FlexWrap.NoWrap);
 
-        public static readonly IValueConverter FlexGrowShrinkConverter = NumberConverter
+        public static readonly IValueConverter FlexGrowShrinkConverter = TypedNumberConverter
                                                                         .OrGlobalValue()
-                                                                        .OrDefault(0);
+                                                                        .OrDefault(Number.Zero);
 
         public static readonly IValueConverter FlexBasisConverter = AutoLengthOrPercentConverter
                                                                    .Or(IntrinsicSizingConverter)

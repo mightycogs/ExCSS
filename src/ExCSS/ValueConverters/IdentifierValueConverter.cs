@@ -55,7 +55,7 @@ namespace ExCSS
 
         public IPropertyValue Convert(IEnumerable<Token> value)
         {
-            return value.Is(_identifier) ? new IdentifierValue(_identifier, value) : null;
+            return value.Is(_identifier) ? new IdentifierValue(_identifier, value, _result) : null;
         }
 
         public IPropertyValue Construct(Property[] properties)
@@ -63,12 +63,15 @@ namespace ExCSS
             return properties.Guard<IdentifierValue>();
         }
 
-        private sealed class IdentifierValue : IPropertyValue
+        private sealed class IdentifierValue : IPropertyValue, ITypedPropertyValue
         {
-            public IdentifierValue(string identifier, IEnumerable<Token> tokens)
+            private readonly T _value;
+
+            public IdentifierValue(string identifier, IEnumerable<Token> tokens, T value)
             {
                 CssText = identifier;
                 Original = new TokenValue(tokens);
+                _value = value;
             }
 
             public string CssText { get; }
@@ -78,6 +81,16 @@ namespace ExCSS
             public TokenValue ExtractFor(string name)
             {
                 return Original;
+            }
+
+            public object GetValue()
+            {
+                // If already an IStyleValue (e.g., Color, Length), return as-is
+                if (_value is IStyleValue)
+                    return _value;
+
+                // For keywords like 'auto', 'none', 'inherit' where T is object/null
+                return new KeywordValue(CssText);
             }
         }
     }
