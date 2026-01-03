@@ -20,18 +20,11 @@ namespace ExCSS.Tests.ExtendedTestsPart1
 
             Assert.NotNull(prop);
             Assert.True(prop.HasValue);
-            
-            var list = prop.TypedValue as StyleValueList;
-            Assert.NotNull(list);
-            Assert.Equal(2, list.Count);
-            
-            Assert.IsType<Number>(list[0]);
-            var width = (Number)list[0];
-            Assert.Equal(16, width.Value);
-            
-            Assert.IsType<Number>(list[1]);
-            var height = (Number)list[1];
-            Assert.Equal(9, height.Value);
+
+            var ratio = Assert.IsType<AspectRatio>(prop.TypedValue);
+            Assert.Equal(16, ratio.Width);
+            Assert.Equal(9, ratio.Height);
+            Assert.False(ratio.IsAuto);
         }
 
         [Fact]
@@ -44,10 +37,11 @@ namespace ExCSS.Tests.ExtendedTestsPart1
             Assert.NotNull(prop);
             Assert.True(prop.HasValue);
             Assert.Equal("1.5", prop.Value);
-            
-            Assert.IsType<Number>(prop.TypedValue);
-            var num = (Number)prop.TypedValue;
-            Assert.Equal(1.5, num.Value);
+
+            var ratio = Assert.IsType<AspectRatio>(prop.TypedValue);
+            Assert.Equal(1.5f, ratio.Width);
+            Assert.Equal(1f, ratio.Height);
+            Assert.Equal(1.5f, ratio.Value);
         }
 
         [Fact]
@@ -60,6 +54,9 @@ namespace ExCSS.Tests.ExtendedTestsPart1
             Assert.NotNull(prop);
             Assert.True(prop.HasValue);
             Assert.Equal("auto", prop.Value);
+
+            var ratio = Assert.IsType<AspectRatio>(prop.TypedValue);
+            Assert.True(ratio.IsAuto);
         }
 
         [Fact]
