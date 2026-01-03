@@ -195,19 +195,22 @@ var lineClamp = rule.Style.GetPropertyValue("-webkit-line-clamp"); // 3
 Supported vendor properties: `appearance`, `-webkit-appearance`, `-webkit-line-clamp`, `-webkit-box-orient`, `-webkit-font-smoothing`, `-moz-osx-font-smoothing`, `user-select`, `overflow-x`, `overflow-y`, `pointer-events`.
 
 ## Shorthand Expansion
-Shorthand properties are automatically expanded to longhands during parsing. Access typed values directly from expanded properties:
+Shorthand properties are automatically expanded to longhands during parsing:
 
 ```cs
 var style = parser.Parse(".box { margin: 10px auto; flex: 2 1 100px; }").StyleRules.First().Style;
 
-// Margin expands to 4 longhands
-var top = style.Declarations.First(d => d.Name == "margin-top").TypedValue as Length;
-var right = style.Declarations.First(d => d.Name == "margin-right").TypedValue as KeywordValue; // auto
+// 1. GetProperty() - returns Property with TypedValue
+var top = style.GetProperty("margin-top").TypedValue as Length;  // 10px
 
-// Flex expands to 3 longhands
-var grow = style.Declarations.First(d => d.Name == "flex-grow").TypedValue as Number;
-var basis = style.Declarations.First(d => d.Name == "flex-basis").TypedValue as Length;
-Console.WriteLine($"grow: {grow.Value}, basis: {basis.Value}px"); // grow: 2, basis: 100px
+// 2. Indexer - returns string value
+var right = style["margin-right"];  // "auto"
+
+// 3. Declarations LINQ - returns Property
+var grow = style.Declarations.First(d => d.Name == "flex-grow").TypedValue as Number;  // 2
+
+// 4. GetPropertyValue() - returns string
+var basis = style.GetPropertyValue("flex-basis");  // "100px"
 ```
 
 | Shorthand | Longhands | Typed Values |
