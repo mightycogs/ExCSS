@@ -49,6 +49,8 @@ namespace ExCSS
             Register(new AnimationExpander());
             Register(new TransitionExpander());
             Register(new FontExpander());
+            Register(new GridLineExpander(PropertyNames.GridColumn, PropertyNames.GridColumnStart, PropertyNames.GridColumnEnd));
+            Register(new GridLineExpander(PropertyNames.GridRow, PropertyNames.GridRowStart, PropertyNames.GridRowEnd));
         }
 
         /// <summary>

@@ -150,6 +150,8 @@
         public static readonly string GridColumnStart = "grid-column-start";
         public static readonly string GridRowEnd = "grid-row-end";
         public static readonly string GridRowStart = "grid-row-start";
+        public static readonly string GridColumn = "grid-column";
+        public static readonly string GridRow = "grid-row";
         public static readonly string GridTemplateColumns = "grid-template-columns";
         public static readonly string GridTemplateRows = "grid-template-rows";
         public static readonly string GridTemplateAreas = "grid-template-areas";
