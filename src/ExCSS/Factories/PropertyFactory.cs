@@ -227,6 +227,12 @@ namespace ExCSS
                 PropertyNames.GridColumnStart,
                 PropertyNames.GridRowEnd,
                 PropertyNames.GridColumnEnd);
+            AddShorthand(PropertyNames.GridColumn, () => new GridColumnProperty(),
+                PropertyNames.GridColumnStart,
+                PropertyNames.GridColumnEnd);
+            AddShorthand(PropertyNames.GridRow, () => new GridRowProperty(),
+                PropertyNames.GridRowStart,
+                PropertyNames.GridRowEnd);
             AddLonghand(PropertyNames.GridColumnEnd, () => new GridColumnEndProperty());
             AddLonghand(PropertyNames.GridColumnStart, () => new GridColumnStartProperty());
             AddLonghand(PropertyNames.GridRowEnd, () => new GridRowEndProperty());
