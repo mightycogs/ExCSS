@@ -115,6 +115,8 @@ namespace ExCSS
                         return UnitNames.Vmax;
                     case Unit.Percent:
                         return UnitNames.Percent;
+                    case Unit.Fr:
+                        return UnitNames.Fr;
                     default:
                         return string.Empty;
                 }
@@ -209,6 +211,7 @@ namespace ExCSS
                 "vmin" => Unit.Vmin,
                 "vw" => Unit.Vw,
                 "%" => Unit.Percent,
+                "fr" => Unit.Fr,
                 _ => Unit.None
             };
         }
@@ -277,7 +280,8 @@ namespace ExCSS
             Vh,
             Vmin,
             Vmax,
-            Percent
+            Percent,
+            Fr
         }
 
         /// <summary>

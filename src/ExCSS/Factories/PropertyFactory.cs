@@ -219,8 +219,21 @@ namespace ExCSS
             AddLonghand(PropertyNames.FontStretch, () => new FontStretchProperty(), true, true);
 
             AddShorthand(PropertyNames.Gap, () => new GapProperty(),
-                PropertyNames.RowGap, 
+                PropertyNames.RowGap,
                 PropertyNames.ColumnGap);
+
+            AddShorthand(PropertyNames.GridArea, () => new GridAreaProperty(),
+                PropertyNames.GridRowStart,
+                PropertyNames.GridColumnStart,
+                PropertyNames.GridRowEnd,
+                PropertyNames.GridColumnEnd);
+            AddLonghand(PropertyNames.GridColumnEnd, () => new GridColumnEndProperty());
+            AddLonghand(PropertyNames.GridColumnStart, () => new GridColumnStartProperty());
+            AddLonghand(PropertyNames.GridRowEnd, () => new GridRowEndProperty());
+            AddLonghand(PropertyNames.GridRowStart, () => new GridRowStartProperty());
+            AddLonghand(PropertyNames.GridTemplateColumns, () => new GridTemplateColumnsProperty());
+            AddLonghand(PropertyNames.GridTemplateRows, () => new GridTemplateRowsProperty());
+            AddLonghand(PropertyNames.GridTemplateAreas, () => new GridTemplateAreasProperty());
 
             AddLonghand(PropertyNames.Height, () => new HeightProperty(), true);
 

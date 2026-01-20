@@ -28,5 +28,6 @@
         public static readonly string Rem = "rem";
         public static readonly string Pc = "pc";
         public static readonly string Percent = "%";
+        public static readonly string Fr = "fr";
     }
 }

@@ -1070,6 +1070,54 @@ namespace ExCSS
             set => SetPropertyValue(PropertyNames.Gap, value);
         }
 
+        public string GridArea
+        {
+            get => GetPropertyValue(PropertyNames.GridArea);
+            set => SetPropertyValue(PropertyNames.GridArea, value);
+        }
+
+        public string GridColumnEnd
+        {
+            get => GetPropertyValue(PropertyNames.GridColumnEnd);
+            set => SetPropertyValue(PropertyNames.GridColumnEnd, value);
+        }
+
+        public string GridColumnStart
+        {
+            get => GetPropertyValue(PropertyNames.GridColumnStart);
+            set => SetPropertyValue(PropertyNames.GridColumnStart, value);
+        }
+
+        public string GridRowEnd
+        {
+            get => GetPropertyValue(PropertyNames.GridRowEnd);
+            set => SetPropertyValue(PropertyNames.GridRowEnd, value);
+        }
+
+        public string GridRowStart
+        {
+            get => GetPropertyValue(PropertyNames.GridRowStart);
+            set => SetPropertyValue(PropertyNames.GridRowStart, value);
+        }
+
+        public string GridTemplateColumns
+        {
+            get => GetPropertyValue(PropertyNames.GridTemplateColumns);
+            set => SetPropertyValue(PropertyNames.GridTemplateColumns, value);
+        }
+
+        public string GridTemplateRows
+        {
+            get => GetPropertyValue(PropertyNames.GridTemplateRows);
+            set => SetPropertyValue(PropertyNames.GridTemplateRows, value);
+        }
+
+        public string GridTemplateAreas
+        {
+            get => GetPropertyValue(PropertyNames.GridTemplateAreas);
+            set => SetPropertyValue(PropertyNames.GridTemplateAreas, value);
+        }
+
         public string GlyphOrientationHorizontal
         {
             get => GetPropertyValue(PropertyNames.GlyphOrientationHorizontal);

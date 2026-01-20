@@ -125,6 +125,32 @@ if (prop.TypedValue is RadialGradient rg)
 }
 ```
 
+## CSS Grid Properties
+Support for CSS Grid layout properties:
+```cs
+var stylesheet = parser.Parse(@"
+.grid {
+    display: grid;
+    grid-template-columns: 1fr 2fr 100px;
+    grid-template-rows: auto 200px;
+}
+.item {
+    grid-column-start: 1;
+    grid-column-end: span 2;
+    grid-row-start: 1;
+    grid-row-end: 3;
+    grid-area: header;
+}");
+var rule = stylesheet.StyleRules.First() as StyleRule;
+
+var cols = rule.Style.GridTemplateColumns; // "1fr 2fr 100px"
+var rows = rule.Style.GridTemplateRows;    // "auto 200px"
+```
+
+Supported grid properties: `grid-template-columns`, `grid-template-rows`, `grid-column-start`, `grid-column-end`, `grid-row-start`, `grid-row-end`, `grid-area`.
+
+Track values supported: `fr` units, `px`, `%`, `auto`, `min-content`, `max-content`.
+
 ## Modern Layout & Effects
 Support for modern layout and visual effects:
 ```cs
@@ -221,6 +247,7 @@ For manual expansion use `ShorthandRegistry.Expand(name, value)`.
 Supported shorthands: `margin`, `padding`, `inset`, `border`, `border-radius`, `background`, `flex`, `flex-flow`, `gap`, `animation`, `transition`, `font`, `text-decoration`, `outline`, `list-style`, `columns`, `column-rule`, `place-content`, `place-items`, `place-self`, `border-top/right/bottom/left`, `border-inline`, `border-block`, `margin-inline`, `margin-block`, `padding-inline`, `padding-block`.
 
 ## Supported Features
+- **CSS Grid**: `grid-template-columns/rows`, `grid-column/row-start/end`, `grid-area` with `fr`, `px`, `%`, `auto` units
 - **Shorthand Expansion**: 25+ CSS shorthands → longhands (background 8-way, animation 8-way, font 7-way, etc.)
 - **Typed Values**: Colors, lengths, calc(), var(), gradients, shadows, aspect-ratio, filter functions as strongly-typed objects
 - **CSS Custom Properties**: Full `var()` support with fallbacks

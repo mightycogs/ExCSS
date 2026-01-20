@@ -145,6 +145,14 @@
         public static readonly string FontWeight = "font-weight";
         public static readonly string Font = "font";
         public static readonly string Gap = "gap";
+        public static readonly string GridArea = "grid-area";
+        public static readonly string GridColumnEnd = "grid-column-end";
+        public static readonly string GridColumnStart = "grid-column-start";
+        public static readonly string GridRowEnd = "grid-row-end";
+        public static readonly string GridRowStart = "grid-row-start";
+        public static readonly string GridTemplateColumns = "grid-template-columns";
+        public static readonly string GridTemplateRows = "grid-template-rows";
+        public static readonly string GridTemplateAreas = "grid-template-areas";
         public static readonly string GlyphOrientationHorizontal = "glyph-orientation-horizontal";
         public static readonly string GlyphOrientationVertical = "glyph-orientation-vertical";
         public static readonly string Height = "height";
