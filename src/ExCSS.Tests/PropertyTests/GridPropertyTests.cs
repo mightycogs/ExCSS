@@ -58,6 +58,24 @@ namespace ExCSS.Tests.PropertyTests
         }
 
         [Fact]
+        public void GridTemplateColumnsWithInlineCommentParsesCorrectly()
+        {
+            var source = @".cyber-dashboard {
+                display: grid;
+                grid-template-columns: 260px 1fr; /* Sidebar fixed */
+                grid-template-rows: auto 1fr auto;
+                min-height: 100vh;
+            }";
+            var styleSheet = ParseStyleSheet(source);
+            var rule = styleSheet.StyleRules.First() as StyleRule;
+
+            Assert.NotNull(rule);
+            Assert.Equal("260px 1fr", rule.Style.GridTemplateColumns);
+            Assert.Equal("auto 1fr auto", rule.Style.GridTemplateRows);
+            Assert.Equal("grid", rule.Style.Display);
+        }
+
+        [Fact]
         public void LengthUnitFrParsesCorrectly()
         {
             Assert.True(Length.TryParse("1fr", out var length1));
