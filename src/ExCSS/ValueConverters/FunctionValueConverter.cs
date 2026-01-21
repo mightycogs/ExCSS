@@ -60,7 +60,7 @@ namespace ExCSS
                 if (_arguments is ITypedPropertyValue typed)
                 {
                     var inner = typed.GetValue();
-                    if (inner is IStyleValue)
+                    if (inner is IGradient)
                         return inner;
                 }
                 return new ExCSS.FunctionValue(_name, _arguments.CssText);

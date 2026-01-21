@@ -78,7 +78,7 @@ namespace ExCSS
             return new GridLineValue(start, end, _startName, _endName);
         }
 
-        private sealed class GridLineValue : IPropertyValue
+        private sealed class GridLineValue : IPropertyValue, ITypedPropertyValue
         {
             private readonly TokenValue _start;
             private readonly TokenValue _end;
@@ -135,6 +135,15 @@ namespace ExCSS
                 if (name.Equals(_startName, StringComparison.OrdinalIgnoreCase)) return _start;
                 if (name.Equals(_endName, StringComparison.OrdinalIgnoreCase)) return _end;
                 return null;
+            }
+
+            public object GetValue()
+            {
+                return new StyleValueList(new IStyleValue[]
+                {
+                    new RawValue(_start.ToText()),
+                    new RawValue(_end.ToText())
+                });
             }
         }
     }

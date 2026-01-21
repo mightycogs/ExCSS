@@ -59,7 +59,7 @@ namespace ExCSS
             return value != null ? new ConditionalStartValue(string.Empty, value, tokens) : null;
         }
 
-        private sealed class ConditionalStartValue : IPropertyValue
+        private sealed class ConditionalStartValue : IPropertyValue, ITypedPropertyValue
         {
             private readonly string _start;
             private readonly IPropertyValue _value;
@@ -86,6 +86,13 @@ namespace ExCSS
             public TokenValue ExtractFor(string name)
             {
                 return _value.ExtractFor(name);
+            }
+
+            public object GetValue()
+            {
+                if (_value is ITypedPropertyValue typed)
+                    return typed.GetValue();
+                return new RawValue(_value?.CssText ?? CssText);
             }
         }
     }

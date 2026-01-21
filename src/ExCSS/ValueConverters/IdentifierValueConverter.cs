@@ -23,7 +23,7 @@ namespace ExCSS
             return properties.Guard<IdentifierValue>();
         }
 
-        private sealed class IdentifierValue : IPropertyValue
+        private sealed class IdentifierValue : IPropertyValue, ITypedPropertyValue
         {
             public IdentifierValue(string identifier, IEnumerable<Token> tokens)
             {
@@ -38,6 +38,11 @@ namespace ExCSS
             public TokenValue ExtractFor(string name)
             {
                 return Original;
+            }
+
+            public object GetValue()
+            {
+                return new KeywordValue(CssText);
             }
         }
     }

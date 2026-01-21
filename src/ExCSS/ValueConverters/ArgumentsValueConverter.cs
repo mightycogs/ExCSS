@@ -37,7 +37,7 @@ namespace ExCSS
             return properties.Guard<ArgumentsValue>();
         }
 
-        private sealed class ArgumentsValue : IPropertyValue, IArgumentsPropertyValue
+        private sealed class ArgumentsValue : IPropertyValue, IArgumentsPropertyValue, ITypedPropertyValue
         {
             private readonly IPropertyValue[] _arguments;
 
@@ -63,6 +63,27 @@ namespace ExCSS
             public TokenValue ExtractFor(string name)
             {
                 return Original;
+            }
+
+            public object GetValue()
+            {
+                var styleValues = new List<IStyleValue>();
+                foreach (var arg in _arguments)
+                {
+                    if (arg is ITypedPropertyValue typed)
+                    {
+                        var val = typed.GetValue();
+                        if (val is IStyleValue sv)
+                            styleValues.Add(sv);
+                        else
+                            styleValues.Add(new RawValue(arg.CssText));
+                    }
+                    else
+                    {
+                        styleValues.Add(new RawValue(arg.CssText));
+                    }
+                }
+                return new StyleValueList(styleValues);
             }
         }
     }

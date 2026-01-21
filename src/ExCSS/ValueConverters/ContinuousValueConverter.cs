@@ -36,7 +36,7 @@ namespace ExCSS
             return properties.Guard<OptionsValue>();
         }
 
-        private sealed class OptionsValue : IPropertyValue
+        private sealed class OptionsValue : IPropertyValue, ITypedPropertyValue
         {
             private readonly IPropertyValue[] _options;
 
@@ -73,6 +73,27 @@ namespace ExCSS
                 }
 
                 return new TokenValue(tokens);
+            }
+
+            public object GetValue()
+            {
+                var styleValues = new List<IStyleValue>();
+                foreach (var option in _options)
+                {
+                    if (option is ITypedPropertyValue typed)
+                    {
+                        var val = typed.GetValue();
+                        if (val is IStyleValue sv)
+                            styleValues.Add(sv);
+                        else
+                            styleValues.Add(new RawValue(option.CssText));
+                    }
+                    else
+                    {
+                        styleValues.Add(new RawValue(option.CssText));
+                    }
+                }
+                return styleValues.Count == 1 ? styleValues[0] : new StyleValueList(styleValues);
             }
         }
     }
