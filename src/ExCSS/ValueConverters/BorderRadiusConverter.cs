@@ -86,7 +86,7 @@ namespace ExCSS
             return null;
         }
 
-        private sealed class BorderRadiusValue : IPropertyValue
+        private sealed class BorderRadiusValue : IPropertyValue, ITypedPropertyValue
         {
             private readonly IPropertyValue _horizontal;
             private readonly IPropertyValue _vertical;
@@ -121,6 +121,13 @@ namespace ExCSS
                 var h = _horizontal.ExtractFor(name);
                 var v = _vertical.ExtractFor(name);
                 return new TokenValue(h.Concat(Token.Whitespace).Concat(v));
+            }
+
+            public object GetValue()
+            {
+                if (_horizontal is ITypedPropertyValue typed)
+                    return typed.GetValue();
+                return new RawValue(_horizontal.CssText);
             }
         }
     }

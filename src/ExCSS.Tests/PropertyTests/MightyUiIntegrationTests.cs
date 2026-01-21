@@ -19,8 +19,17 @@ namespace ExCSS.Tests.PropertyTests
 
             var typedValue = prop.TypedValue;
             Assert.NotNull(typedValue);
-            Assert.IsType<RawValue>(typedValue);
-            Assert.Equal("4px", typedValue.ToString());
+            Assert.IsType<StyleValueTuple>(typedValue);
+
+            var tuple = (StyleValueTuple)typedValue;
+            Assert.Equal(4, tuple.Count);
+            foreach (var corner in tuple)
+            {
+                Assert.IsType<Length>(corner);
+                var length = (Length)corner;
+                Assert.Equal(4d, length.Value);
+                Assert.Equal(Length.Unit.Px, length.Type);
+            }
 
             var expanded = ShorthandRegistry.Expand("border-radius", typedValue);
             Assert.Equal(4, expanded.Count);
@@ -31,8 +40,10 @@ namespace ExCSS.Tests.PropertyTests
 
             foreach (var kvp in expanded)
             {
-                Assert.IsType<RawValue>(kvp.Value);
-                Assert.Equal("4px", kvp.Value.ToString());
+                Assert.IsType<Length>(kvp.Value);
+                var cornerLength = (Length)kvp.Value;
+                Assert.Equal(4d, cornerLength.Value);
+                Assert.Equal(Length.Unit.Px, cornerLength.Type);
             }
         }
 
@@ -99,14 +110,24 @@ namespace ExCSS.Tests.PropertyTests
 
             var typedValue = prop.TypedValue;
             Assert.NotNull(typedValue);
-            Assert.IsType<RawValue>(typedValue);
-            Assert.Equal("50%", typedValue.ToString());
+            Assert.IsType<StyleValueTuple>(typedValue);
+
+            var tuple = (StyleValueTuple)typedValue;
+            Assert.Equal(4, tuple.Count);
+            foreach (var corner in tuple)
+            {
+                Assert.IsType<Percent>(corner);
+                var pct = (Percent)corner;
+                Assert.Equal(50d, pct.Value);
+            }
 
             var expanded = ShorthandRegistry.Expand("border-radius", typedValue);
             Assert.Equal(4, expanded.Count);
             foreach (var kvp in expanded)
             {
-                Assert.Equal("50%", kvp.Value.ToString());
+                Assert.IsType<Percent>(kvp.Value);
+                var pct = (Percent)kvp.Value;
+                Assert.Equal(50d, pct.Value);
             }
         }
 
