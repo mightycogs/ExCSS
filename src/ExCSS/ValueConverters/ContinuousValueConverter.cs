@@ -86,11 +86,11 @@ namespace ExCSS
                         if (val is IStyleValue sv)
                             styleValues.Add(sv);
                         else
-                            styleValues.Add(new RawValue(option.CssText));
+                            styleValues.Add(new RawValue(option.CssText, isParseFailure: true));
                     }
                     else
                     {
-                        styleValues.Add(new RawValue(option.CssText));
+                        styleValues.Add(new RawValue(option.CssText, isParseFailure: true));
                     }
                 }
                 return styleValues.Count == 1 ? styleValues[0] : new StyleValueList(styleValues);

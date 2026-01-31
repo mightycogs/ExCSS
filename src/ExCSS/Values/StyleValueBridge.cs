@@ -21,8 +21,8 @@ namespace ExCSS
                     return styleValue;
             }
 
-            // Fallback to raw value
-            return new RawValue(propertyValue.CssText);
+            // Fallback to raw value - marks as parse failure for test detection
+            return new RawValue(propertyValue.CssText, isParseFailure: true);
         }
     }
 }

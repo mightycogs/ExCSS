@@ -92,7 +92,7 @@ namespace ExCSS
             {
                 if (_value is ITypedPropertyValue typed)
                     return typed.GetValue();
-                return new RawValue(_value?.CssText ?? CssText);
+                return new RawValue(_value?.CssText ?? CssText, isParseFailure: true);
             }
         }
     }

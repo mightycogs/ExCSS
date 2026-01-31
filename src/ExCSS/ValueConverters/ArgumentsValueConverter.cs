@@ -76,11 +76,11 @@ namespace ExCSS
                         if (val is IStyleValue sv)
                             styleValues.Add(sv);
                         else
-                            styleValues.Add(new RawValue(arg.CssText));
+                            styleValues.Add(new RawValue(arg.CssText, isParseFailure: true));
                     }
                     else
                     {
-                        styleValues.Add(new RawValue(arg.CssText));
+                        styleValues.Add(new RawValue(arg.CssText, isParseFailure: true));
                     }
                 }
                 return new StyleValueList(styleValues);

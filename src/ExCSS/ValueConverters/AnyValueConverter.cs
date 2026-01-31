@@ -194,7 +194,7 @@ namespace ExCSS
                     foreach (var itemTokens in items)
                     {
                         var itemValue = ExtractTypedFromTokens(itemTokens);
-                        styleValues.Add(itemValue ?? new RawValue(itemTokens.ToText()));
+                        styleValues.Add(itemValue ?? new RawValue(itemTokens.ToText(), isParseFailure: true));
                     }
                     return new StyleValueList(styleValues);
                 }
@@ -212,13 +212,13 @@ namespace ExCSS
                             if (token.Type == TokenType.Whitespace)
                                 continue;
                             var tokenValue = ExtractTypedFromSingleToken(token);
-                            styleValues.Add(tokenValue ?? new RawValue(token.ToValue()));
+                            styleValues.Add(tokenValue ?? new RawValue(token.ToValue(), isParseFailure: true));
                         }
                         if (styleValues.Any(v => !(v is RawValue)))
                             return new StyleValueList(styleValues);
                     }
                 }
-                return new RawValue(text);
+                return new RawValue(text, isParseFailure: true);
             }
 
             private static IStyleValue ExtractTypedFromSingleToken(Token token)

@@ -139,11 +139,11 @@ namespace ExCSS
                         if (val is IStyleValue sv)
                             styleValues.Add(sv);
                         else
-                            styleValues.Add(new RawValue(propValue.CssText));
+                            styleValues.Add(new RawValue(propValue.CssText, isParseFailure: true));
                     }
                     else
                     {
-                        styleValues.Add(new RawValue(propValue.CssText));
+                        styleValues.Add(new RawValue(propValue.CssText, isParseFailure: true));
                     }
                 }
                 return new StyleValueTuple(styleValues);

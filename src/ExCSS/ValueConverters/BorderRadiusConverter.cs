@@ -127,7 +127,7 @@ namespace ExCSS
             {
                 if (_horizontal is ITypedPropertyValue typed)
                     return typed.GetValue();
-                return new RawValue(_horizontal.CssText);
+                return new RawValue(_horizontal.CssText, isParseFailure: true);
             }
         }
     }

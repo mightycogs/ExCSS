@@ -1,4 +1,5 @@
 using System.Linq;
+using ExCSS.Tests.Helpers;
 using Xunit;
 
 namespace ExCSS.Tests.PropertyTests
@@ -6,6 +7,7 @@ namespace ExCSS.Tests.PropertyTests
     /// <summary>
     /// Tests based on test_alpha_matrix.html - checkerboard pattern with 4 gradient layers.
     /// Verifies all multi-layer gradients are correctly parsed and returned.
+    /// Uses ParseFailureDetector to catch silent fallbacks to RawValue.
     /// </summary>
     public class AlphaMatrixTests
     {
@@ -46,12 +48,11 @@ namespace ExCSS.Tests.PropertyTests
 
             Assert.NotNull(bgImageProp);
             Assert.True(bgImageProp.HasValue, "background-image should have a value");
+            ParseFailureDetector.AssertNoParseFailure(bgImageProp);
 
-            var value = bgImageProp.Value;
-
-            // Count linear-gradient occurrences - should be exactly 4
-            var gradientCount = value.Split("linear-gradient").Length - 1;
-            Assert.Equal(4, gradientCount);
+            var list = Assert.IsType<StyleValueList>(bgImageProp.TypedValue);
+            Assert.Equal(4, list.Count);
+            Assert.All(list, item => Assert.IsType<LinearGradient>(item));
         }
 
         [Fact]
@@ -61,11 +62,17 @@ namespace ExCSS.Tests.PropertyTests
             var rule = sheet.StyleRules.First();
 
             var bgImageProp = rule.Style.GetProperty("background-image");
-            var value = bgImageProp.Value;
+            ParseFailureDetector.AssertNoParseFailure(bgImageProp);
 
-            // Verify both 45deg and -45deg angles are present
-            Assert.Contains("45deg", value);
-            Assert.Contains("-45deg", value);
+            var list = Assert.IsType<StyleValueList>(bgImageProp.TypedValue);
+            var gradients = list.OfType<LinearGradient>().ToList();
+
+            Assert.Equal(4, gradients.Count);
+
+            var angles = gradients.Select(g => g.Angle).ToList();
+
+            Assert.Equal(2, angles.Count(a => a.Value == 45 && a.Type == Angle.Unit.Deg));
+            Assert.Equal(2, angles.Count(a => a.Value == -45 && a.Type == Angle.Unit.Deg));
         }
 
         [Fact]
@@ -78,6 +85,7 @@ namespace ExCSS.Tests.PropertyTests
 
             Assert.NotNull(bgColorProp);
             Assert.True(bgColorProp.HasValue, "background-color should have a value");
+            ParseFailureDetector.AssertNoParseFailure(bgColorProp);
             Assert.Equal("rgb(255, 255, 255)", bgColorProp.Value);
         }
 
@@ -91,6 +99,7 @@ namespace ExCSS.Tests.PropertyTests
 
             Assert.NotNull(bgSizeProp);
             Assert.True(bgSizeProp.HasValue);
+            ParseFailureDetector.AssertNoParseFailure(bgSizeProp);
             Assert.Contains("20px", bgSizeProp.Value);
         }
 
@@ -101,8 +110,9 @@ namespace ExCSS.Tests.PropertyTests
             var rule = sheet.StyleRules.First();
 
             var bgImageProp = rule.Style.GetProperty("background-image");
-            var typedValue = bgImageProp.TypedValue;
+            ParseFailureDetector.AssertNoParseFailure(bgImageProp);
 
+            var typedValue = bgImageProp.TypedValue;
             Assert.NotNull(typedValue);
 
             var list = Assert.IsType<StyleValueList>(typedValue);
@@ -124,12 +134,15 @@ namespace ExCSS.Tests.PropertyTests
 
             Assert.NotNull(bgImageProp);
             Assert.True(bgImageProp.HasValue);
+            ParseFailureDetector.AssertNoParseFailure(bgImageProp);
 
-            var value = bgImageProp.Value;
+            var gradient = Assert.IsType<LinearGradient>(bgImageProp.TypedValue);
 
-            Assert.Contains("linear-gradient", value);
-            Assert.Contains("135deg", value);
-            Assert.Contains("rgba", value);
+            Assert.Equal(135, gradient.Angle.Value);
+            Assert.Equal(Angle.Unit.Deg, gradient.Angle.Type);
+
+            var stops = gradient.Stops.ToList();
+            Assert.All(stops, s => Assert.True(s.Color.Alpha < 1.0, "Expected rgba colors with alpha < 1"));
         }
 
         [Fact]
@@ -139,12 +152,14 @@ namespace ExCSS.Tests.PropertyTests
             var rule = sheet.StyleRules.First();
 
             var bgImageProp = rule.Style.GetProperty("background-image");
-            var value = bgImageProp.Value;
+            ParseFailureDetector.AssertNoParseFailure(bgImageProp);
 
-            // Verify alpha values are preserved (0.9, 0.2, 0.5)
-            Assert.Contains("0.9", value);
-            Assert.Contains("0.2", value);
-            Assert.Contains("0.5", value);
+            var gradient = Assert.IsType<LinearGradient>(bgImageProp.TypedValue);
+            var stops = gradient.Stops.ToList();
+
+            Assert.Equal(0.9, stops[0].Color.Alpha, 1);
+            Assert.Equal(0.2, stops[1].Color.Alpha, 1);
+            Assert.Equal(0.5, stops[2].Color.Alpha, 1);
         }
 
         [Fact]
@@ -154,18 +169,15 @@ namespace ExCSS.Tests.PropertyTests
             var rule = sheet.StyleRules.First();
 
             var bgImageProp = rule.Style.GetProperty("background-image");
+            ParseFailureDetector.AssertNoParseFailure(bgImageProp);
+
             var gradient = Assert.IsType<LinearGradient>(bgImageProp.TypedValue);
 
             var stops = gradient.Stops.ToList();
             Assert.Equal(3, stops.Count);
 
-            // First stop: rgba(0,0,0,0.9)
             Assert.Equal(0.9, stops[0].Color.Alpha, 1);
-
-            // Second stop: rgba(0,0,0,0.2)
             Assert.Equal(0.2, stops[1].Color.Alpha, 1);
-
-            // Third stop: rgba(255,0,0,0.5)
             Assert.Equal(0.5, stops[2].Color.Alpha, 1);
             Assert.Equal(255, stops[2].Color.R);
         }
@@ -240,20 +252,82 @@ namespace ExCSS.Tests.PropertyTests
 
             Assert.Equal(6, sheet.StyleRules.Count());
 
-            // Verify background-check has 4 gradients
             var bgCheckRule = sheet.StyleRules.First(r => r.SelectorText == ".background-check");
             var bgImage = bgCheckRule.Style.GetProperty("background-image");
-            Assert.Equal(4, bgImage.Value.Split("linear-gradient").Length - 1);
+            ParseFailureDetector.AssertNoParseFailure(bgImage);
+            var bgImageList = Assert.IsType<StyleValueList>(bgImage.TypedValue);
+            Assert.Equal(4, bgImageList.Count);
+            Assert.All(bgImageList, item => Assert.IsType<LinearGradient>(item));
 
-            // Verify background-overlay has rgba
             var overlayRule = sheet.StyleRules.First(r => r.SelectorText == ".background-overlay");
             var overlayBgImage = overlayRule.Style.GetProperty("background-image");
-            Assert.Contains("rgba", overlayBgImage.Value);
+            ParseFailureDetector.AssertNoParseFailure(overlayBgImage);
+            var gradient = Assert.IsType<LinearGradient>(overlayBgImage.TypedValue);
+            Assert.All(gradient.Stops, s => Assert.True(s.Color.Alpha < 1.0));
 
-            // Verify ui-container has rgba background with 0.8 alpha
             var uiRule = sheet.StyleRules.First(r => r.SelectorText == ".ui-container");
             var uiBgColor = uiRule.Style.GetProperty("background-color");
-            Assert.Contains("0.8", uiBgColor.Value);
+            ParseFailureDetector.AssertNoParseFailure(uiBgColor);
+            var color = Assert.IsType<Color>(uiBgColor.TypedValue);
+            Assert.Equal(0.8, color.Alpha, 1);
+        }
+
+        [Fact]
+        public void CheckerboardPattern_BackgroundImageNoSilentParseFailures()
+        {
+            var sheet = _parser.Parse(CheckerboardCss);
+            var rule = sheet.StyleRules.First();
+            var bgImageProp = rule.Style.GetProperty("background-image");
+
+            ParseFailureDetector.AssertNoParseFailure(bgImageProp);
+        }
+
+        [Fact]
+        public void OverlayGradient_BackgroundImageNoSilentParseFailures()
+        {
+            var sheet = _parser.Parse(OverlayCss);
+            var rule = sheet.StyleRules.First();
+            var bgImageProp = rule.Style.GetProperty("background-image");
+
+            ParseFailureDetector.AssertNoParseFailure(bgImageProp);
+        }
+
+        [Fact]
+        public void CheckerboardPattern_TypedValueIsStyleValueList()
+        {
+            var sheet = _parser.Parse(CheckerboardCss);
+            var rule = sheet.StyleRules.First();
+
+            var bgImageProp = rule.Style.GetProperty("background-image");
+
+            // Use helper to assert proper type (not RawValue fallback)
+            var list = ParseFailureDetector.AssertTypedValue<StyleValueList>(bgImageProp);
+            Assert.Equal(4, list.Count);
+
+            // Each item should be LinearGradient, not RawValue
+            foreach (var item in list)
+            {
+                Assert.IsType<LinearGradient>(item);
+            }
+        }
+
+        [Fact]
+        public void OverlayGradient_TypedValueIsLinearGradient()
+        {
+            var sheet = _parser.Parse(OverlayCss);
+            var rule = sheet.StyleRules.First();
+
+            var bgImageProp = rule.Style.GetProperty("background-image");
+
+            // Use helper to assert proper type
+            var gradient = ParseFailureDetector.AssertTypedValue<LinearGradient>(bgImageProp);
+
+            // Verify gradient has 3 stops with correct alpha values
+            var stops = gradient.Stops.ToList();
+            Assert.Equal(3, stops.Count);
+            Assert.Equal(0.9, stops[0].Color.Alpha, 1);
+            Assert.Equal(0.2, stops[1].Color.Alpha, 1);
+            Assert.Equal(0.5, stops[2].Color.Alpha, 1);
         }
     }
 }
