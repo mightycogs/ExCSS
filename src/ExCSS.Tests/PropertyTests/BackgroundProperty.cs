@@ -1,5 +1,6 @@
 ﻿namespace ExCSS.Tests
 {
+    using System.Linq;
     using ExCSS;
     using Xunit;
 
@@ -735,6 +736,148 @@
             Assert.False(concrete.IsInherited);
             Assert.True(concrete.HasValue);
             Assert.Equal("url(\"" + url + "\")", concrete.Value);
+        }
+
+        [Fact]
+        public void BackgroundMultiLayerGradientsWithColor_ShouldExpandCorrectly()
+        {
+            // This is the failing case from MightyUI - multi-layer gradients with color
+            var css = @".plaid {
+                background:
+                    repeating-linear-gradient(90deg, transparent, transparent 50px, rgba(255, 127, 0, 0.25) 50px, rgba(255, 127, 0, 0.25) 60px),
+                    repeating-linear-gradient(0deg, transparent, transparent 50px, rgba(255, 127, 0, 0.25) 50px, rgba(255, 127, 0, 0.25) 60px),
+                    #333;
+            }";
+
+            var parser = new StylesheetParser();
+            var sheet = parser.Parse(css);
+            var rule = sheet.StyleRules.First();
+
+            // Debug: List all properties
+            var allProps = string.Join(", ", rule.Style.Select(p => $"{p.Name}={p.Value ?? "(null)"}"));
+            System.Console.WriteLine($"All properties: {allProps}");
+
+            // Check background shorthand first
+            var bgProp = rule.Style.GetProperty("background");
+            System.Console.WriteLine($"background: HasValue={bgProp?.HasValue}, Value={bgProp?.Value ?? "(null)"}");
+
+            // Check background-image was expanded correctly (should have both gradients)
+            var bgImageProp = rule.Style.GetProperty("background-image");
+            System.Console.WriteLine($"background-image: HasValue={bgImageProp?.HasValue}, Value={bgImageProp?.Value ?? "(null)"}");
+            Assert.NotNull(bgImageProp);
+            Assert.True(bgImageProp.HasValue, $"background-image should have a value. All props: {allProps}");
+            Assert.Contains("repeating-linear-gradient", bgImageProp.Value);
+
+            // Check background-color was extracted
+            var bgColorProp = rule.Style.GetProperty("background-color");
+            System.Console.WriteLine($"background-color: HasValue={bgColorProp?.HasValue}, Value={bgColorProp?.Value ?? "(null)"}");
+            Assert.NotNull(bgColorProp);
+            Assert.True(bgColorProp.HasValue, "background-color should have a value");
+        }
+
+        [Fact]
+        public void BackgroundSingleGradient_ShouldExpandCorrectly()
+        {
+            // Test simpler case - single gradient
+            var css = @".box { background: repeating-linear-gradient(90deg, red, blue 50px); }";
+
+            var parser = new StylesheetParser();
+            var sheet = parser.Parse(css);
+            var rule = sheet.StyleRules.First();
+
+            var allProps = string.Join(", ", rule.Style.Select(p => $"{p.Name}={p.Value ?? "(null)"}"));
+            System.Console.WriteLine($"Single gradient all properties: {allProps}");
+
+            var bgProp = rule.Style.GetProperty("background");
+            System.Console.WriteLine($"background: HasValue={bgProp?.HasValue}, Value={bgProp?.Value ?? "(null)"}");
+
+            var bgImageProp = rule.Style.GetProperty("background-image");
+            System.Console.WriteLine($"background-image: HasValue={bgImageProp?.HasValue}, Value={bgImageProp?.Value ?? "(null)"}");
+
+            Assert.True(bgImageProp?.HasValue == true, $"background-image should have value. All props: {allProps}");
+            Assert.Contains("repeating-linear-gradient", bgImageProp.Value);
+        }
+
+        [Fact]
+        public void BackgroundTwoGradients_ShouldExpandCorrectly()
+        {
+            // Test two gradients without color
+            var css = @".box { background: linear-gradient(red, blue), linear-gradient(green, yellow); }";
+
+            var parser = new StylesheetParser();
+            var sheet = parser.Parse(css);
+            var rule = sheet.StyleRules.First();
+
+            var allProps = string.Join(", ", rule.Style.Select(p => $"{p.Name}={p.Value ?? "(null)"}"));
+            System.Console.WriteLine($"Two gradients all properties: {allProps}");
+
+            var bgImageProp = rule.Style.GetProperty("background-image");
+            System.Console.WriteLine($"background-image: HasValue={bgImageProp?.HasValue}, Value={bgImageProp?.Value ?? "(null)"}");
+
+            Assert.True(bgImageProp?.HasValue == true, $"background-image should have value. All props: {allProps}");
+            Assert.Contains("linear-gradient", bgImageProp.Value);
+        }
+
+        [Fact]
+        public void BackgroundShorthandWithTwoGradients_ShouldWork()
+        {
+            // Test background shorthand (not background-image) with two gradients
+            var snippet = "background: linear-gradient(red, blue), linear-gradient(green, yellow)";
+            var property = ParseDeclaration(snippet);
+
+            System.Console.WriteLine($"Property: Name={property.Name}, HasValue={property.HasValue}, Value={property.Value ?? "(null)"}");
+
+            Assert.Equal("background", property.Name);
+            Assert.True(property.HasValue, "background shorthand should have value");
+        }
+
+        [Fact]
+        public void BackgroundImageWithTwoGradients_ShouldWork()
+        {
+            // Test background-image longhand with two gradients
+            var snippet = "background-image: linear-gradient(red, blue), linear-gradient(green, yellow)";
+            var property = ParseDeclaration(snippet);
+
+            System.Console.WriteLine($"Property: Name={property.Name}, HasValue={property.HasValue}, Value={property.Value ?? "(null)"}");
+
+            Assert.Equal("background-image", property.Name);
+            Assert.True(property.HasValue, "background-image should have value");
+            Assert.Contains("linear-gradient", property.Value);
+        }
+
+        [Fact]
+        public void BackgroundShorthandTwoGradientsAndColor_DirectParsing()
+        {
+            // First test via direct declaration parsing - this should work
+            var snippet = "background: linear-gradient(red, blue), linear-gradient(green, yellow), #333";
+            var shorthandProp = ParseDeclaration(snippet);
+            System.Console.WriteLine($"Direct ParseDeclaration: Name={shorthandProp.Name}, HasValue={shorthandProp.HasValue}, Value={shorthandProp.Value ?? "(null)"}");
+
+            Assert.Equal("background", shorthandProp.Name);
+            Assert.True(shorthandProp.HasValue, $"Shorthand should have value. Got: {shorthandProp.Value}");
+        }
+
+        [Fact]
+        public void BackgroundShorthandTwoGradientsAndColor_StylesheetExpansion()
+        {
+            // Test via full stylesheet parsing
+            var css = @".box { background: linear-gradient(red, blue), linear-gradient(green, yellow), #333; }";
+            var parser = new StylesheetParser();
+            var sheet = parser.Parse(css);
+            var rule = sheet.StyleRules.First();
+
+            var allProps = string.Join(", ", rule.Style.Select(p => $"{p.Name}={p.Value ?? "(null)"}"));
+            System.Console.WriteLine($"All properties: {allProps}");
+
+            var bgImageProp = rule.Style.GetProperty("background-image");
+            System.Console.WriteLine($"background-image: HasValue={bgImageProp?.HasValue}, Value={bgImageProp?.Value ?? "(null)"}");
+
+            Assert.True(bgImageProp?.HasValue == true, $"background-image should have value. All props: {allProps}");
+            Assert.Contains("linear-gradient", bgImageProp.Value);
+
+            var bgColorProp = rule.Style.GetProperty("background-color");
+            Assert.True(bgColorProp?.HasValue == true);
+            Assert.Equal("rgb(51, 51, 51)", bgColorProp.Value);
         }
     }
 }

@@ -90,9 +90,9 @@ namespace ExCSS
                 {
                     var extracted = value.ExtractFor(name);
 
-                    if (extracted == null) continue;
+                    if (extracted == null || extracted.Count == 0) continue;
 
-                    if (tokens.Count > 0) tokens.Add(Token.Whitespace);
+                    if (tokens.Count > 0) tokens.Add(Token.Comma);
 
                     tokens.AddRange(extracted);
                 }
