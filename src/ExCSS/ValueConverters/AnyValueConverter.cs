@@ -267,8 +267,7 @@ namespace ExCSS
 
             private static IStyleValue ExtractTypedFromTokens(IEnumerable<Token> tokens)
             {
-                var tokenList = tokens.ToList();
-                var function = tokenList.OfType<FunctionToken>().FirstOrDefault();
+                var function = tokens.FirstOrDefault(t => t is FunctionToken) as FunctionToken;
                 if (function != null)
                 {
                     if (function.Data.Equals(FunctionNames.Var, StringComparison.OrdinalIgnoreCase))
