@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using System.Runtime.InteropServices;
 
 // ReSharper disable UnusedMember.Global
@@ -362,7 +363,7 @@ namespace ExCSS
             }
             else
             {
-                var arguments = string.Join(", ", R.ToString(), G.ToString(), B.ToString(), Alpha.ToString());
+                var arguments = string.Join(", ", R.ToString(), G.ToString(), B.ToString(), Alpha.ToString(CultureInfo.InvariantCulture));
                 return FunctionNames.Rgba.StylesheetFunction(arguments);
             }
         }
